@@ -45,7 +45,8 @@ export class CommentController {
   }
 
   //! GET ALL REPORTED COMMENTS
-  @Get()
+  @Get('comments-to-validate')
+  @UseGuards(AuthGuard)
   async findAll(
     @Query('page') page: string = '0',
     @Query('limit') limit: string = '10',
@@ -53,7 +54,6 @@ export class CommentController {
     const skip = Number(page) * Number(limit);
     const take = Number(limit);
     const { data, total } = await this.service.findAll(skip, take);
-    //  const reportedComments = data.flatMap((comment) => reportedComments);
     console.log('--- REQUETE RECUE ---');
     return { data, total };
   }
