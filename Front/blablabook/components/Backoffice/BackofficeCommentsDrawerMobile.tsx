@@ -106,15 +106,15 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
                 </div>
 
                 <div className="shrink-0">
-                  <span className="rounded-full flex items-center gap-2 justify-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800">
-                    Nb. signalements <span className="material-symbols-rounded">report</span>
+                  <span className="rounded-full flex items-center gap-2 justify-center px-2 py-1 text-s font-medium bg-orange-100 text-orange-800">
+                    {commentToModerate._count.reports} <span className="material-symbols-rounded">report</span>
                   </span>
                 </div>
               </div>
             </Drawer.Trigger>
             <Drawer.Portal>
-              <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50  " />
-              <Drawer.Content className="bg-gray-100  overflow-y-scroll max-h-[50vh] flex flex-col rounded-t-[10px] mt-24 h-fit fixed bottom-0 left-0 right-0 outline-none z-50 antialiased">
+              <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
+              <Drawer.Content className="bg-gray-100 flex flex-col rounded-t-[10px] mt-24 h-fit fixed bottom-0 left-0 right-0 outline-none z-50 antialiased">
                 <div className="p-4 bg-white rounded-t-[10px] flex-1">
                   <div aria-hidden className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300 mb-8"/>
                   <div className="max-w-md mx-auto">
@@ -147,9 +147,9 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
                         <p className="text-gray-500 text-sm">{commentToModerate.user.email}</p>
                       </div>
                       <span
-                        className="rounded-full px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 flex items-center"
+                        className="rounded-full px-2 py-1 text-s font-medium bg-orange-100 text-orange-800 flex items-center"
                       >
-                       Nb. signalements <span className="material-symbols-rounded">report</span>
+                       {commentToModerate._count.reports} <span className="material-symbols-rounded">report</span>
                       </span>
                     </div>
 

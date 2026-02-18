@@ -25,13 +25,27 @@ export type Comment = {
   user: User;
   createdAt: string;
   updatedAt: string;
+  _count: {
+    reports: number;
+  }
 }
 
 const url = process.env.NEXT_PUBLIC_API_URL ?? "http://api:3000";
 
 export const getUserCount = async () => {
+  const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
   const res = await fetch(`${url}/users/user-count`, {
-    method: "GET"
+    method: "GET",
+    headers: {
+           Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!res.ok) return { success: false, data: [] };
@@ -40,6 +54,23 @@ export const getUserCount = async () => {
 };
 
 export const getCommentCount = async () => {
+<<<<<<< Updated upstream
+=======
+  const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
+  const res = await fetch(`${url}/comments/comment-count`, {
+    method: "GET",
+        headers: {
+           Authorization: `Bearer ${token}`,
+    },
+  });
+>>>>>>> Stashed changes
 
   console.log("Fetching comment count...");
   const session = await auth();
@@ -56,6 +87,7 @@ export const getCommentCount = async () => {
 };
 
 export const getReportedCommentCount = async () => {
+<<<<<<< Updated upstream
   const session = await auth();
   const token = (session as Session)?.accessToken;
   const res = await fetch(`${url}/comments/reported-comment-count`, {
@@ -63,6 +95,21 @@ export const getReportedCommentCount = async () => {
     headers : {
       Authorization: `Bearer ${token}`,
     }
+=======
+   const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
+  const res = await fetch(`${url}/comments/reported-comment-count`, {
+    method: "GET",
+        headers: {
+           Authorization: `Bearer ${token}`,
+    },
+>>>>>>> Stashed changes
   });
 
   if (!res.ok) return { success: false, data: [] };
@@ -86,7 +133,11 @@ export const getUsers = async (
   limit: number,
   search: string = "",
 ) => {
+<<<<<<< Updated upstream
  try {
+=======
+  try {
+>>>>>>> Stashed changes
     const session = await auth();
     const token = (session as Session)?.accessToken;
     if (!token) {
@@ -106,6 +157,7 @@ export const getUsers = async (
         },
       },
     );
+<<<<<<< Updated upstream
 
     if (!res.ok) {
       throw new Error("Failed to fetch users");
@@ -115,6 +167,17 @@ export const getUsers = async (
 
     return usersData;
 
+=======
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch users");
+    }
+  
+    const usersData = await res.json();
+  
+    return usersData;
+
+>>>>>>> Stashed changes
   } catch (error) {
     console.error("Error updating profile:", error);
     return {
@@ -204,7 +267,7 @@ export const removeUser = async (userId: number) => {
   }
 };
 
-//! GET ALL COMMMENTS TO MODERATE
+// //! GET ALL COMMMENTS TO MODERATE
 export const getAllCommentsToModerate = async (
   page: number,
   limit: number,
@@ -236,14 +299,15 @@ export const getAllCommentsToModerate = async (
         error: "Une erreur est survenue",
       };
 
-       const data = await res.json();
-
-    // return {
-    //   success: true,
-    //   data: resData,
-    //   message: "Récupération des critiques à modérer effectuée avec succès",
-    // };
-    return data;
+      const data = await res.json();
+      console.log("Data from API:", data);
+    return {
+      success: true,
+      data,
+      total: data.length,
+      message: "Récupération des critiques à modérer effectuée avec succès",
+    };
+ //   return data;
   } catch (error) {
     console.error("Error fetching comments to moderate : ", error);
     return {
@@ -252,6 +316,50 @@ export const getAllCommentsToModerate = async (
     };
   }
 };
+
+// // //! GET ALL COMMMENTS TO MODERATE
+// export const getAllCommentsToModerate = async (
+//   page: number,
+//   limit: number,
+// ) => {
+//   try {
+//     const session = await auth();
+//     const token = (session as Session)?.accessToken;
+//     if (!token) {
+//       return {
+//         success: false,
+//         error: "Non authentifié",
+//       };
+//     }
+//     const res = await fetch(
+//       `http://api:3000/comments/comments-to-moderate?page=${page}&limit=${limit}`,
+//       {
+//         cache: "no-store",
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "application/json",
+//            Authorization: `Bearer ${token}`,
+//         },
+//       },
+//     );
+  
+    
+//     if (!res.ok) {
+//       throw new Error("Failed to fetch commments to moderate");
+//     }
+  
+//     const data = await res.json();
+  
+//     return data;
+
+//   } catch (error) {
+//     console.error("Error updating profile:", error);
+//     return {
+//       success: false,
+//       error: "Une erreur est survenue lors de la mise à jour du profil",
+//     };
+//   }
+// };
 
 //! APPROVE COMMENT
 export const approveComment = async (commentId: number, newStatus: string) => {
@@ -264,7 +372,7 @@ export const approveComment = async (commentId: number, newStatus: string) => {
         error: "Non authentifié",
       };
     }
-    const res = await fetch(`http://api:3000/comments/${commentId}/approved`, {
+    const res = await fetch(`http://api:3000/comments/${commentId}/approve`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
