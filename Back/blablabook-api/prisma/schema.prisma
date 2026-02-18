@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement()) @db.SmallInt
+  id   Int    @id @default(autoincrement()) @db.Integer
   name String @unique @db.VarChar(50)
 
   users User[]
@@ -23,7 +23,7 @@ model Role {
 }
 
 model User {
-  id          Int      @id @default(autoincrement()) @db.SmallInt
+  id          Int      @id @default(autoincrement()) @db.Integer
   username    String   @unique @db.VarChar(64)
   email       String   @unique @db.VarChar(255)
   password    String   @db.VarChar(64)
@@ -33,7 +33,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  roleId Int @db.SmallInt
+  roleId Int @db.Integer
   role   Role @relation(fields: [roleId], references: [id])
 
   userBooks      UserBook[]
@@ -45,9 +45,9 @@ model User {
 }
 
 model Book {
-  id              Int      @id @default(autoincrement()) @db.SmallInt
+  id              Int      @id @default(autoincrement()) @db.Integer
   title           String   @db.VarChar(255)
-  page_count      Int      @db.SmallInt
+  page_count      Int      @db.Integer
   author          String   @db.VarChar(64)
   publishing_date String   @db.VarChar(36)
   summary         String?  @db.Text
@@ -66,15 +66,15 @@ model Book {
 }
 
 model UserBook {
-  id        Int                @id @default(autoincrement()) @db.SmallInt
+  id        Int                @id @default(autoincrement()) @db.Integer
   status    UserBookStatusEnum @default(NOT_READ)
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 
-  userId Int @db.SmallInt
+  userId Int @db.Integer
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bookId Int @db.SmallInt
+  bookId Int @db.Integer
   book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   @@unique([userId, bookId])
@@ -82,7 +82,7 @@ model UserBook {
 }
 
 model Comment {
-  id            Int               @id @default(autoincrement()) @db.SmallInt
+  id            Int               @id @default(autoincrement()) @db.Integer
   title         String            @db.VarChar(255)
   content       String            @db.Text
   date          DateTime          @default(now())
@@ -90,10 +90,10 @@ model Comment {
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
-  userId Int @db.SmallInt
+  userId Int @db.Integer
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bookId  Int             @db.SmallInt
+  bookId  Int             @db.Integer
   book    Book            @relation(fields: [bookId], references: [id], onDelete: Cascade)
   reports CommentReport[]
 
@@ -103,11 +103,11 @@ model Comment {
 }
 
 model Rate {
-  id     Int   @id @default(autoincrement()) @db.SmallInt
-  rating Int   @db.SmallInt
+  id     Int   @id @default(autoincrement()) @db.Integer
+  rating Int   @db.Integer
 
-  userId Int @db.SmallInt
-  bookId Int @db.SmallInt
+  userId Int @db.Integer
+  bookId Int @db.Integer
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
@@ -132,11 +132,11 @@ enum CommentStatusEnum {
 }
 
 model CommentReport {
-  id        Int      @id @default(autoincrement()) @db.SmallInt
+  id        Int      @id @default(autoincrement()) @db.Integer
   createdAt DateTime @default(now())
 
-  commentId Int @db.SmallInt
-  userId    Int @db.SmallInt
+  commentId Int @db.Integer
+  userId    Int @db.Integer
 
   comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -144,4 +144,5 @@ model CommentReport {
   @@unique([commentId, userId])
   @@index([commentId])
   @@index([userId])
+  @@map("commentReport")
 }

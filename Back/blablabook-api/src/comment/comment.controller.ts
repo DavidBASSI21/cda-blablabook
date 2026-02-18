@@ -37,11 +37,11 @@ export class CommentController {
 
   @Get('comments-to-moderate')
   @UseGuards(AdminGuard)
-  async getCommentsToReview(
+  async getCommentsToModerate(
     @Query('page') page: string = '0',
     @Query('limit') limit: string = '10',
   ) {
-    return this.service.getCommentsToReview(Number(page), Number(limit));
+    return this.service.getCommentsToModerate(Number(page), Number(limit));
   }
 
   @Patch(':id/approve')

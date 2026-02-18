@@ -10,7 +10,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 export class CommentService {
   constructor(private prisma: PrismaService) {}
 
-  async getCommentsToReview(page: number = 0, limit: number = 10) {
+  async getCommentsToModerate(page: number = 0, limit: number = 10) {
     const skip = page * limit;
     const take = limit;
     const comments = await this.prisma.comment.findMany({
@@ -27,13 +27,14 @@ export class CommentService {
           select: { reports: true },
         },
         user: {
-          select: { id: true, username: true, profilePicture: true },
+          select: { id: true, username: true },
         },
         book: {
           select: { id: true, title: true, author: true },
         },
       },
     });
+    console.log('Comments found in DB:', comments.length);
     return comments.filter((comment) => comment._count.reports >= 5);
   }
 
@@ -46,7 +47,7 @@ export class CommentService {
     const result = await this.prisma.$queryRaw<[{ count: number }]>`
       SELECT COUNT(DISTINCT c.id)::int as count
       FROM comment c
-      INNER JOIN "CommentReport" cr ON c.id = cr."commentId"
+      INNER JOIN "commentReport" cr ON c.id = cr."commentId"
       GROUP BY c.id
       HAVING COUNT(cr.id) >= 5
     `;
@@ -128,7 +129,7 @@ export class CommentService {
   async rejectComment(commentId: number) {
     const exists = await this.prisma.comment.findUnique({
       where: { id: commentId },
-      select: { id: true, status: true }, 
+      select: { id: true, status: true },
     });
     if (!exists) throw new NotFoundException('Commentaire introuvable');
     return this.prisma.comment.update({
