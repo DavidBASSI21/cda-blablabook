@@ -23,6 +23,7 @@ export type Comment = {
   reportCounter: number;
   title: string;
   content: string;
+  user: User;
   createdAt: string;
   updatedAt: string;
 }
@@ -65,6 +66,32 @@ export const getBookReadCount = async () => {
   if (!res.ok) return { success: false, data: [] };
   const data = await res.json();
   return { success: true, data };
+};
+
+//! GET ALL USERS 
+export const getUsers = async (
+  page: number,
+  limit: number,
+  search: string = "",
+) => {
+  const res = await fetch(
+    `http://api:3000/users?page=${page}&limit=${limit}&search=${search}`,
+    {
+      cache: "no-store",
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch users");
+  }
+
+  const usersData = await res.json();
+
+  return usersData;
 };
 
 //! UPDATE USER ROLE
@@ -147,27 +174,140 @@ export const removeUser = async (userId: number) => {
   }
 };
 
-export const getUsers = async (
+//! GET ALL COMMMENTS TO MODERATE
+export const getAllCommentsToModerate = async (
   page: number,
   limit: number,
-  search: string = "",
 ) => {
-  const res = await fetch(
-    `http://api:3000/users?page=${page}&limit=${limit}&search=${search}`,
-    {
-      cache: "no-store",
-      method: "GET",
+  try {
+    const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
+    const res = await fetch(
+      `http://api:3000/comments/comments-to-moderate?page=${page}&limit=${limit}`,
+      {
+        cache: "no-store",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  
+    if (!res.ok)
+      return {
+        success: false,
+        error: "Une erreur est survenue",
+      };
+
+       const data = await res.json();
+
+    // return {
+    //   success: true,
+    //   data: resData,
+    //   message: "Récupération des critiques à modérer effectuée avec succès",
+    // };
+    return data;
+
+  } catch (error) {
+    console.error("Error fetching comments to moderate : ", error);
+    return {
+      success: false,
+      error: "Une erreur est survenue lors de la récupération des critiques à modérer",
+    };
+  }
+};
+
+//! APPROVE COMMENT
+export const approveComment = async (commentId: number, newStatus: string) => {
+  try {
+    const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
+    const res = await fetch(`http://api:3000/comments/${commentId}/approved`, {
+      method: "PATCH",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    },
-  );
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return {
+        success: false,
+        error: errorData.message || "Erreur lors de l'approbation de la critique'",
+        status: res.status,
+      };
+    }
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch users");
+    const resData = await res.json();
+
+    return {
+      success: true,
+      data: resData,
+      message: "Critique approuvée avec succès",
+    };
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return {
+      success: false,
+      error: "Une erreur est survenue lors de l'approbation de la critique'",
+    };
   }
+};
 
-  const usersData = await res.json();
+//! DISAPPROVE COMMENT
+export const disapproveComment = async (commentId: number, newStatus: string) => {
+  try {
+    const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
+    const res = await fetch(`http://api:3000/comments/${commentId}/reject`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return {
+        success: false,
+        error: errorData.message || "Erreur lors de la désapprobation de la critique'",
+        status: res.status,
+      };
+    }
 
-  return usersData;
+    const resData = await res.json();
+
+    return {
+      success: true,
+      data: resData,
+      message: "Critique désapprouvée avec succès",
+    };
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return {
+      success: false,
+      error: "Une erreur est survenue lors de la désapprobation de la critique'",
+    };
+  }
 };

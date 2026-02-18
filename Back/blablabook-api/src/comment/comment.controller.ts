@@ -45,15 +45,18 @@ export class CommentController {
   }
 
   //! GET ALL REPORTED COMMENTS
-  @Get('comments-to-validate')
+  @Get('comments-to-moderate')
   @UseGuards(AuthGuard)
-  async findAll(
+  async getAllCommentsToModerate(
     @Query('page') page: string = '0',
     @Query('limit') limit: string = '10',
   ) {
     const skip = Number(page) * Number(limit);
     const take = Number(limit);
-    const { data, total } = await this.service.findAll(skip, take);
+    const { data, total } = await this.service.getAllCommentsToModerate(
+      skip,
+      take,
+    );
     console.log('--- REQUETE RECUE ---');
     return { data, total };
   }

@@ -23,16 +23,24 @@ export class CommentService {
     return { count };
   }
 
-  async findAll(skip: number, take: number) {
+  async getAllCommentsToModerate(skip: number, take: number) {
+    const whereCondition = {
+      reportCounter: {
+        gte: 5,
+      },
+    };
     const [data, total] = await Promise.all([
       this.prisma.comment.findMany({
         skip,
         take,
-        where: {
-          reportCounter: { gte: 5 },
+        where: whereCondition,
+        include: {
+          user: true,
         },
       }),
-      this.prisma.comment.count(),
+      this.prisma.comment.count({
+        where: whereCondition,
+      }),
     ]);
     return { data, total };
   }
