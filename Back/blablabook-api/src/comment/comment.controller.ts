@@ -43,4 +43,18 @@ export class CommentController {
     const userId = req.user.id;
     return this.service.createComment(userId, createCommentDto);
   }
+
+  //! GET ALL REPORTED COMMENTS
+  @Get()
+  async findAll(
+    @Query('page') page: string = '0',
+    @Query('limit') limit: string = '10',
+  ) {
+    const skip = Number(page) * Number(limit);
+    const take = Number(limit);
+    const { data, total } = await this.service.findAll(skip, take);
+    //  const reportedComments = data.flatMap((comment) => reportedComments);
+    console.log('--- REQUETE RECUE ---');
+    return { data, total };
+  }
 }

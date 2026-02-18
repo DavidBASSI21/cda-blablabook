@@ -3,6 +3,7 @@ import { useState } from "react";
 import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
 import { User } from "@/lib/actions/backoffice.action";
 import BackofficeUsersMobile from "./BackofficeUsersMobile";
+import BackofficeCommentsMobile from "./BackofficeCommentsMobile";
 
 export type DeleteUserAction = (userId: number) => Promise<{ success: boolean; error?: string }>;
 export type UpdateUserRoleAction = (userId: number, newRoleId: number) => Promise<{ success: boolean; error?: string}> 
@@ -45,6 +46,16 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, onDe
                 </div>
                 <div className="lg:hidden">
                     <BackofficeUsersMobile users={users} totalUserCount={totalUserCount} onDeleteUser={onDeleteUser} onUpdateUserRole={onUpdateUserRole}/>
+                </div>
+                </>
+            }
+            {activeTab === 'reportedComments' && 
+                <>
+                {/* <div className="hidden lg:block">
+                    <BackofficeUsersTableDesktop  users={users} totalUserCount={totalUserCount} onDeleteUser={onDeleteUser} onUpdateUserRole={onUpdateUserRole}/>
+                </div> */}
+                <div className="lg:hidden">
+                    <BackofficeCommentsMobile/>
                 </div>
                 </>
             }
