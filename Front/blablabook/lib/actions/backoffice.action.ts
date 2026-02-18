@@ -18,6 +18,15 @@ export type User = {
     updatedAt: string;
 }
 
+export type Comment = {
+  id: number;
+  reportCounter: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const getUserCount = async () => {
   const res = await fetch(`http://api:3000/users/user-count`, {
     method: "GET"

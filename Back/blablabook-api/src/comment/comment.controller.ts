@@ -52,4 +52,18 @@ export class CommentController {
     const userId = req.user.id;
     return this.service.createComment(userId, createCommentDto);
   }
+
+  //! GET ALL REPORTED COMMENTS
+  @Get('comments-to-validate')
+  @UseGuards(AuthGuard)
+  async findAll(
+    @Query('page') page: string = '0',
+    @Query('limit') limit: string = '10',
+  ) {
+    const skip = Number(page) * Number(limit);
+    const take = Number(limit);
+    const { data, total } = await this.service.findAll(skip, take);
+    console.log('--- REQUETE RECUE ---');
+    return { data, total };
+  }
 }

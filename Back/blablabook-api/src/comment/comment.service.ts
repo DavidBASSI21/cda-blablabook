@@ -22,6 +22,21 @@ export class CommentService {
 
     return { count };
   }
+
+  async findAll(skip: number, take: number) {
+    const [data, total] = await Promise.all([
+      this.prisma.comment.findMany({
+        skip,
+        take,
+        where: {
+          reportCounter: { gte: 5 },
+        },
+      }),
+      this.prisma.comment.count(),
+    ]);
+    return { data, total };
+  }
+
   async createComment(userId: number, dto: CreateCommentDto) {
     const book = await this.prisma.book.findUnique({
       where: { id: dto.bookId },
