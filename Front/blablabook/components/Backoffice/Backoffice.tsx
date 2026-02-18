@@ -37,9 +37,15 @@ export default async function Backoffice() {
             </div>
         </div>
         <div className="mt-4">
-            <BackofficeSwitch users={initialUsers} totalUserCount={totalUserCount} onDeleteUser={removeUser} onUpdateUserRole={updateUserRole}
-            
-            onApproveComment={approveComment} onDisapproveComment={disapproveComment} commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount}/>
+            <BackofficeSwitch 
+              users={initialUsers} 
+              totalUserCount={totalUserCount} 
+              onDeleteUser={removeUser} 
+              onUpdateUserRole={updateUserRole}
+              onApproveComment={approveComment} 
+              onDisapproveComment={disapproveComment} 
+              commentsToModerate={commentsToModerate} 
+              totalCommentsToModerateCount={totalCommentsToModerateCount}/>
         </div>
     </section>
     )

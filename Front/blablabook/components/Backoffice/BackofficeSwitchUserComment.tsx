@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
 import { User, Comment } from "@/lib/actions/backoffice.action";
 import BackofficeUsersMobile from "./BackofficeUsersDrawerMobile";
@@ -38,6 +38,10 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, comm
 
     
     const [activeTab, setActiveTab] = useState<'users' | 'reportedComments'>('users');
+
+    useEffect(() => {
+       console.log("activeTab", activeTab);
+    }, [activeTab]);
 
     return (
         <>

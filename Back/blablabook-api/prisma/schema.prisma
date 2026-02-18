@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement()) @db.Integer
+  id   Int    @id @default(autoincrement())
   name String @unique @db.VarChar(50)
 
   users User[]
@@ -23,7 +23,7 @@ model Role {
 }
 
 model User {
-  id          Int      @id @default(autoincrement()) @db.Integer
+  id          Int      @id @default(autoincrement())
   username    String   @unique @db.VarChar(64)
   email       String   @unique @db.VarChar(255)
   password    String   @db.VarChar(64)
@@ -45,7 +45,7 @@ model User {
 }
 
 model Book {
-  id              Int      @id @default(autoincrement()) @db.Integer
+  id              Int      @id @default(autoincrement())
   title           String   @db.VarChar(255)
   page_count      Int      @db.Integer
   author          String   @db.VarChar(64)
@@ -66,7 +66,7 @@ model Book {
 }
 
 model UserBook {
-  id        Int                @id @default(autoincrement()) @db.Integer
+  id        Int                @id @default(autoincrement())
   status    UserBookStatusEnum @default(NOT_READ)
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
@@ -82,7 +82,7 @@ model UserBook {
 }
 
 model Comment {
-  id            Int               @id @default(autoincrement()) @db.Integer
+  id            Int               @id @default(autoincrement())
   title         String            @db.VarChar(255)
   content       String            @db.Text
   date          DateTime          @default(now())
@@ -103,8 +103,8 @@ model Comment {
 }
 
 model Rate {
-  id     Int   @id @default(autoincrement()) @db.Integer
-  rating Int   @db.Integer
+  id     Int   @id @default(autoincrement()) 
+  rating Int   @db.SmallInt
 
   userId Int @db.Integer
   bookId Int @db.Integer
@@ -132,7 +132,7 @@ enum CommentStatusEnum {
 }
 
 model CommentReport {
-  id        Int      @id @default(autoincrement()) @db.Integer
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
   commentId Int @db.Integer
@@ -144,5 +144,6 @@ model CommentReport {
   @@unique([commentId, userId])
   @@index([commentId])
   @@index([userId])
-  @@map("commentReport")
+
+  @@map("commentReport") 
 }

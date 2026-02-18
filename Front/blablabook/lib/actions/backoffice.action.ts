@@ -40,18 +40,29 @@ export const getUserCount = async () => {
 };
 
 export const getCommentCount = async () => {
-  const res = await fetch(`${url}/comments/comment-count`, {
-    method: "GET"
-  });
 
+  console.log("Fetching comment count...");
+  const session = await auth();
+  const token = (session as Session)?.accessToken;
+  const res = await fetch(`${url}/comments/comment-count`, {
+    method: "GET",
+    headers : {
+      Authorization: `Bearer ${token}`,
+    }
+  });
   if (!res.ok) return { success: false, data: [] };
   const data = await res.json();
   return { success: true, data };
 };
 
 export const getReportedCommentCount = async () => {
+  const session = await auth();
+  const token = (session as Session)?.accessToken;
   const res = await fetch(`${url}/comments/reported-comment-count`, {
-    method: "GET"
+    method: "GET",
+    headers : {
+      Authorization: `Bearer ${token}`,
+    }
   });
 
   if (!res.ok) return { success: false, data: [] };
@@ -75,24 +86,42 @@ export const getUsers = async (
   limit: number,
   search: string = "",
 ) => {
-  const res = await fetch(
-    `http://api:3000/users?page=${page}&limit=${limit}&search=${search}`,
-    {
-      cache: "no-store",
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+ try {
+    const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
+    const res = await fetch(
+      `http://api:3000/users?page=${page}&limit=${limit}&search=${search}`,
+      {
+        cache: "no-store",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+        },
       },
-    },
-  );
+    );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch users");
+    if (!res.ok) {
+      throw new Error("Failed to fetch users");
+    }
+
+    const usersData = await res.json();
+
+    return usersData;
+
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return {
+      success: false,
+      error: "Une erreur est survenue lors de la mise à jour du profil",
+    };
   }
-
-  const usersData = await res.json();
-
-  return usersData;
 };
 
 //! UPDATE USER ROLE

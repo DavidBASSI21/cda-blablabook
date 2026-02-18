@@ -49,9 +49,8 @@ export class CommentService {
       FROM comment c
       INNER JOIN "commentReport" cr ON c.id = cr."commentId"
       GROUP BY c.id
-      HAVING COUNT(cr.id) >= 5
+      HAVING COUNT(cr.id) >= 5 AND NOT c.status = 'HIDDEN'
     `;
-
     return { count: result[0]?.count || 0 };
   }
 
