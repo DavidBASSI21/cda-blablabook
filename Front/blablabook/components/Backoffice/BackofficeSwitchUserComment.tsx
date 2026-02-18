@@ -1,16 +1,20 @@
 'use client';
 import { useState } from "react";
 import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
-import { User } from "@/lib/actions/backoffice.action";
-import BackofficeUsersMobile from "./BackofficeUsersMobile";
-import BackofficeCommentsMobile from "./BackofficeCommentsMobile";
+import { User, Comment } from "@/lib/actions/backoffice.action";
+import BackofficeUsersMobile from "./BackofficeUsersDrawerMobile";
+import BackofficeCommentsDrawerMobile from "./BackofficeCommentsDrawerMobile";
 
 export type DeleteUserAction = (userId: number) => Promise<{ success: boolean; error?: string }>;
 export type UpdateUserRoleAction = (userId: number, newRoleId: number) => Promise<{ success: boolean; error?: string}> 
+export type ApproveCommentAction = (commentId: number, newStatus: string) => Promise<{ success: boolean; error?: string }>;
+export type DisapproveCommentAction = (commentId: number, newStatus: string) => Promise <{ success: boolean; error?: string }>;
 
 interface BackofficeSwitchProps {
     users: User[];
     totalUserCount: number;
+    commentsToModerate: Comment[];
+    totalCommentsToModerateCount: number;
     onDeleteUser: (userId: number) => Promise<{ 
         success: boolean; 
         error?: string; 
@@ -19,9 +23,18 @@ interface BackofficeSwitchProps {
         success: boolean;
         error?:string;
     }>;
+    onApproveComment:(commentId: number, newStatus: string) => Promise<{
+        success: boolean;
+        error?: string;
+    }>;
+    onDisapproveComment:(commentId: number, newStatus: string) => Promise<{
+        success: boolean;
+        error?: string;
+    }>;
+
 }
 
-export default function BackofficeSwitchUserComment({users, totalUserCount, onDeleteUser, onUpdateUserRole}: BackofficeSwitchProps) {
+export default function BackofficeSwitchUserComment({users, totalUserCount, commentsToModerate, totalCommentsToModerateCount, onDeleteUser, onUpdateUserRole, onApproveComment, onDisapproveComment}: BackofficeSwitchProps) {
 
     
     const [activeTab, setActiveTab] = useState<'users' | 'reportedComments'>('users');
@@ -55,7 +68,7 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, onDe
                     <BackofficeUsersTableDesktop  users={users} totalUserCount={totalUserCount} onDeleteUser={onDeleteUser} onUpdateUserRole={onUpdateUserRole}/>
                 </div> */}
                 <div className="lg:hidden">
-                    <BackofficeCommentsMobile/>
+                    <BackofficeCommentsDrawerMobile commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
                 </div>
                 </>
             }
