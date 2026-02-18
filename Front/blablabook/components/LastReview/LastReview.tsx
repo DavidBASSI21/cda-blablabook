@@ -1,7 +1,9 @@
 import ExpandableText from "@/components/ExpandableText";
 import { getUploadUrl } from "@/lib/utils";
-import Link from "next/link";
+import Link from "next/dist/client/link";
 import Image from "next/image";
+import LibraryControls from "@/components/LastReview/LibraryControls";
+import { auth } from "@/auth.config";
 
 type Item = {
   id: number;
@@ -12,9 +14,7 @@ type Item = {
   user: {
     id: number;
     username: string;
-    author: string;
-    cover: string;
-    profilePicture: string;
+    profilePicture: string | null;
   };
 };
 
@@ -32,7 +32,12 @@ async function getLatest() {
 }
 
 export default async function DernieresCritiques() {
-  const items = await getLatest();
+  const items: Item[] = await getLatest();
+
+  // ✅ session côté server
+  const session = await auth();
+  const token = session?.accessToken ?? null;
+  const userId = session?.user ? Number(session.user.id) : null;
 
   return (
     <section className="w-full bg-white">
@@ -49,34 +54,43 @@ export default async function DernieresCritiques() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-          {items.map((c: Item) => (
+          {items.map((c) => (
             <article
               key={c.id}
               className="h-full flex flex-col rounded-md border bg-white p-5 shadow-sm hover:shadow-md transition"
             >
               <div className="flex gap-4">
-                <div className="relative w-16 sm:w-20 h-24 sm:h-28 shrink-0">
-                  <Image
-                    src={c.book.cover}
-                    alt={c.book.title}
-                    fill
-                    className="object-cover rounded-lg border"
-                    loading="lazy"
-                  />
-                </div>
+                <Image
+                  src={c.book.cover}
+                  alt={c.book.title}
+                  fill
+                  className="w-16 sm:w-20 h-24 sm:h-28 object-cover rounded-lg border"
+                  loading="lazy"
+                />
 
-                <div className="min-w-0">
-                  <h2 className="text-base sm:text-lg font-semibold text-black leading-tight truncate">
-                    {c.book.title}
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base sm:text-lg font-semibold text-black truncate">
+                    <Link
+                      href={`/bibliotheque/${c.book.id}`}
+                      className="hover:text-quater ml-1"
+                    >
+                      {c.book.title}
+                    </Link>
                   </h2>
 
                   <p className="text-xs sm:text-sm text-gray-500">
                     de <span className="italic">{c.book.author}</span>
                   </p>
 
-                  <button className="mt-3 inline-flex items-center rounded-md bg-green-100 px-3 py-1 text-xs text-green-700 hover:bg-green-200">
-                    + ajouter à ma bibliothèque
-                  </button>
+                  {token && userId && (
+                    <div className="mt-2">
+                      <LibraryControls
+                        bookId={c.book.id}
+                        token={token}
+                        userId={userId}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -92,29 +106,30 @@ export default async function DernieresCritiques() {
                   minHeightClassName="min-h-[72px] sm:min-h-[96px]"
                 />
 
-                <div className="mt-auto pt-6 flex flex-wrap items-center gap-1 text-xs sm:text-sm text-gray-800">
+                <div className="mt-auto pt-6 flex items-center gap-1 text-xs sm:text-sm text-gray-800">
                   <div className="relative h-6 w-6 rounded-full overflow-hidden">
-                    {c.user?.profilePicture ? (
+                    {c.user.profilePicture ? (
                       <Image
                         src={getUploadUrl(c.user.profilePicture)}
                         alt={c.user.username}
                         fill
                         className="rounded-full object-cover border"
-                        loading="lazy"
                       />
                     ) : (
                       <span className="material-icons">account_circle</span>
                     )}
                   </div>
+
                   <span className="italic">
-                    par
+                    par{" "}
                     <Link
                       href={`/profil/${c.user.id}`}
-                      className="underline hover:text-quater ml-1"
+                      className="underline hover:text-quater"
                     >
-                      <span>{c.user.username}</span>
+                      {c.user.username}
                     </Link>
                   </span>
+
                   <span className="italic">
                     le {new Date(c.date).toLocaleDateString("fr-FR")}
                   </span>

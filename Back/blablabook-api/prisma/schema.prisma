@@ -14,8 +14,8 @@ datasource db {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id   Int    @id @default(autoincrement()) @db.SmallInt
+  name String @unique @db.VarChar(50)
 
   users User[]
 
@@ -23,59 +23,58 @@ model Role {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  username    String   @unique
-  email       String   @unique
-  password    String
+  id          Int      @id @default(autoincrement()) @db.SmallInt
+  username    String   @unique @db.VarChar(64)
+  email       String   @unique @db.VarChar(255)
+  password    String   @db.VarChar(64)
   isPrivate   Boolean  @default(false)
-  description String?
-  profilePicture String?
+  description String?  @db.Text
+  profilePicture String? @db.VarChar(500)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  roleId Int
+  roleId Int @db.SmallInt
   role   Role @relation(fields: [roleId], references: [id])
 
-  userBooks UserBook[]
-  comments  Comment[]
-  rates     Rate[]
+  userBooks      UserBook[]
+  comments       Comment[]
+  rates          Rate[]
+  commentReports CommentReport[]
 
   @@map("user")
 }
 
 model Book {
-  id              Int      @id @default(autoincrement())
-  title           String
-  page_count      Int
-  author          String
-  category        String
-  publishing_date DateTime?
-  summary         String?
-  publisher       String?
-  isbn            String?  @unique
-  cover           String?
-  averageRating   Float?   @default(0)
+  id              Int      @id @default(autoincrement()) @db.SmallInt
+  title           String   @db.VarChar(255)
+  page_count      Int      @db.SmallInt
+  author          String   @db.VarChar(64)
+  publishing_date String   @db.VarChar(36)
+  summary         String?  @db.Text
+  publisher       String?  @db.VarChar(64)
+  isbn            String?  @unique @db.VarChar(13)
+  cover           String?  @db.VarChar(255)
+  averageRating   Float    @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   userBooks UserBook[]
   comments  Comment[]
   rates     Rate[]
-  
 
   @@map("book")
 }
 
 model UserBook {
-  id        Int                @id @default(autoincrement())
+  id        Int                @id @default(autoincrement()) @db.SmallInt
   status    UserBookStatusEnum @default(NOT_READ)
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 
-  userId Int
+  userId Int @db.SmallInt
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bookId Int
+  bookId Int @db.SmallInt
   book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   @@unique([userId, bookId])
@@ -83,20 +82,21 @@ model UserBook {
 }
 
 model Comment {
-  id            Int               @id @default(autoincrement())
-  title         String
+  id            Int               @id @default(autoincrement()) @db.SmallInt
+  title         String            @db.VarChar(255)
   reportCounter Int               @default(0)
-  content       String
+  content       String            @db.Text
   date          DateTime          @default(now())
   status        CommentStatusEnum @default(ACTIVE)
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
-  userId Int
+  userId Int @db.SmallInt
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bookId Int
-  book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId  Int             @db.SmallInt
+  book    Book            @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  reports CommentReport[]
 
   @@index([userId])
   @@index([bookId])
@@ -104,11 +104,11 @@ model Comment {
 }
 
 model Rate {
-  id     Int   @id @default(autoincrement())
-  rating Float
+  id     Int   @id @default(autoincrement()) @db.SmallInt
+  rating Int   @db.SmallInt
 
-  userId Int
-  bookId Int
+  userId Int @db.SmallInt
+  bookId Int @db.SmallInt
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
@@ -130,4 +130,19 @@ enum CommentStatusEnum {
   HIDDEN
 
   @@map("comment_status")
+}
+
+model CommentReport {
+  id        Int      @id @default(autoincrement()) @db.SmallInt
+  createdAt DateTime @default(now())
+
+  commentId Int @db.SmallInt
+  userId    Int @db.SmallInt
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
 }

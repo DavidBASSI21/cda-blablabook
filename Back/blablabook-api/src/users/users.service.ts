@@ -64,6 +64,7 @@ export class UsersService {
         profilePicture: true,
         createdAt: true,
         updatedAt: true,
+        roleId: true,
         userBooks: {
           include: {
             book: true,
@@ -125,6 +126,20 @@ export class UsersService {
       where: { id },
       include: {
         role: true,
+      },
+    });
+  }
+
+  async findAuthUserById(id: number) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        isPrivate: true,
+        profilePicture: true,
+        roleId: true,
       },
     });
   }

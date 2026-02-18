@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getUploadUrl } from "@/lib/utils";
 import Link from "next/dist/client/link";
+import ReportButton from "@/components/Comments/ReportButton";
 
 export interface Comment {
   id?: number;
@@ -109,7 +110,7 @@ export default function CommentsSection({
   }, [isModalOpen]);
 
   const canComment = Boolean(token && userId);
-
+  console.log("comments ids:", comments.map(c => c.id));
   return (
     <div className="border-t border-gray-200 pt-6">
       <button
@@ -198,13 +199,9 @@ export default function CommentsSection({
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        title="Signaler"
-                        className="shrink-0 text-gray-400 hover:text-gray-600 transition"
-                      >
-                        <span className="material-icons text-lg">report</span>
-                      </button>
+                      {token && typeof comment.id === "number" && (
+                        <ReportButton commentId={comment.id} token={token} />
+                      )}
                     </div>
 
                     <p className="mt-2 text-sm text-gray-700 leading-relaxed whitespace-pre-line wrap-break-word overflow-wrap-anywhere">

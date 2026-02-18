@@ -94,7 +94,9 @@ export class AuthService {
     return this.generateTokenResponse(user);
   }
 
-  private generateTokenResponse(user: UserWithRole | User) {
+  private generateTokenResponse(
+    user: UserWithRole | Omit<User, 'password' | 'email'>,
+  ) {
     const token = this.jwtService.sign(
       { id: user.id, type: 'auth' },
       { expiresIn: '7d' },
@@ -105,7 +107,6 @@ export class AuthService {
       token_type: 'Bearer',
       user: {
         id: user?.id,
-        email: user?.email,
         username: user?.username,
         isPrivate: user?.isPrivate,
         profilePicture: user?.profilePicture,

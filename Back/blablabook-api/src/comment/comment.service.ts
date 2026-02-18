@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -47,6 +47,33 @@ export class CommentService {
         book: { select: { id: true, title: true, author: true, cover: true } },
       },
     });
+  }
+
+  async reportComment(commentId: number, userId: number) {
+    const exists = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { id: true },
+    });
+    if (!exists) throw new NotFoundException('Commentaire introuvable');
+
+    try {
+      await this.prisma.$transaction([
+        this.prisma.commentReport.create({
+          data: { commentId, userId },
+        }),
+        this.prisma.comment.update({
+          where: { id: commentId },
+          data: { reportCounter: { increment: 1 } },
+        }),
+      ]);
+
+      return { ok: true };
+    } catch (e: any) {
+      if (e?.code === 'P2002') {
+        throw new ConflictException('Déjà signalé');
+      }
+      throw e;
+    }
   }
 
   async latestCommentPerBook(take = 10) {
