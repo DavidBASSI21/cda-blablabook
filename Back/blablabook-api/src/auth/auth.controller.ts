@@ -1,23 +1,8 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiForbiddenResponse,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { Controller, Post, Body } from '@nestjs/common';
+import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './guards/auth.guard';
-import { User } from '../../generated/prisma';
 
 @ApiTags('Auth.')
 @Controller('auth')
@@ -44,18 +29,5 @@ export class AuthController {
       email: loginDto.email,
       password: loginDto.password,
     });
-  }
-
-  // This route is protected by the AuthGuard, which checks the presence and validity of the token.
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  @ApiResponse({ status: 200, description: 'Profil récupéré' })
-  @ApiUnauthorizedResponse({
-    description:
-      "Jeton d'autorisation manquant (ou invalide) dans l'entête de la requête",
-  })
-  getProfile(@Request() request: Request & { user: User }) {
-    return request.user;
   }
 }

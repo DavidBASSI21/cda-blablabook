@@ -14,6 +14,7 @@ import {
   ForbiddenException,
   Req,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -45,6 +46,7 @@ export class UsersController {
 
   //! GET ALL USERS
   @Get()
+  @UseGuards(AdminGuard)
   async findAll(
     @Query('page') page: string = '0',
     @Query('limit') limit: string = '10',
@@ -53,6 +55,7 @@ export class UsersController {
     const skip = Number(page) * Number(limit);
     const take = Number(limit);
     const { data, total } = await this.usersService.findAll(skip, take, search);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const usersWithoutPassWword = data.map(({ password, ...user }) => user);
     console.log('--- REQUETE RECUE ---');
     console.log('Search query param:', search);
@@ -89,9 +92,7 @@ export class UsersController {
   async findById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.usersService.findById(id);
     if (user) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { email, password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      return user;
     }
   }
 
@@ -177,11 +178,12 @@ export class UsersController {
   //! DELETE USER BY ID
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+  @UseGuards(SelfOrAdminGuard)
   @ApiUnauthorizedResponse({
     description:
       "Jeton d'autorisation manquant (ou invalide) dans l'entête de la requête",
   })
+  @HttpCode(204)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }

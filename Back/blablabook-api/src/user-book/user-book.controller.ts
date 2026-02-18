@@ -7,6 +7,7 @@ import {
   Delete,
   ParseIntPipe,
   Patch,
+  HttpCode,
 } from '@nestjs/common';
 import { UserBookService } from './user-book.service';
 // import { NewUserBookDto } from './dto/new-user-book.dto';
@@ -60,6 +61,7 @@ export class UserBookController {
   // }
 
   @Delete('/remove/:id')
+  @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.userBookService.remove(+id);
   }

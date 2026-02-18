@@ -1,7 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { DeleteUserAction, UpdateUserRoleAction } from "./BackofficeSwitchUserComment";
+import {
+  DeleteUserAction,
+  UpdateUserRoleAction,
+} from "./BackofficeSwitchUserComment";
 import { getUploadUrl } from "@/lib/utils";
 import { User } from "@/lib/actions/backoffice.action";
 import { Drawer } from "vaul";
@@ -21,20 +24,24 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export default function BackofficeUsersMobile({users: initialUsers, onUpdateUserRole, onDeleteUser, totalUserCount}: {
+export default function BackofficeUsersMobile({
+  users: initialUsers,
+  onUpdateUserRole,
+  onDeleteUser,
+  totalUserCount,
+}: {
   users: User[];
   totalUserCount: number;
   onDeleteUser: DeleteUserAction;
   onUpdateUserRole: UpdateUserRoleAction;
 }) {
+  const router = useRouter();
+  const [users, setUsers] = useState(initialUsers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(initialUsers.length < totalUserCount);
 
-    const router = useRouter();
-    const [users, setUsers] = useState(initialUsers);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [page, setPage] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(initialUsers.length < totalUserCount);
-  
   const debouncedSearch = useDebounce(searchTerm, 500);
   const observerRef = useRef<HTMLDivElement>(null);
   const pageSize = 10;
@@ -43,17 +50,17 @@ export default function BackofficeUsersMobile({users: initialUsers, onUpdateUser
     const resetAndSearch = async () => {
       // setLoading(true);
       const res = await getUsers(0, pageSize, debouncedSearch);
-      // On remplace la liste des utilisateurs avec le résultat de la recherche : 
+      // On remplace la liste des utilisateurs avec le résultat de la recherche :
       setUsers(res.data);
       // Reset de la page de résultat pour éviter toute erreur
       setPage(0);
-      // Si le nombre d'utilisateurs affiché 
+      // Si le nombre d'utilisateurs affiché
       setHasMore(res.data.length < res.total);
       // setLoading(false);
     };
 
     if (debouncedSearch !== undefined) {
-        resetAndSearch();
+      resetAndSearch();
     }
   }, [debouncedSearch]);
 
@@ -74,18 +81,24 @@ export default function BackofficeUsersMobile({users: initialUsers, onUpdateUser
           setLoading(false);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
   }, [hasMore, loading, page, debouncedSearch, users.length]);
   return (
-<div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2">
       <div className="px-2 py-3 sticky top-0 bg-white z-10 border-b border-gray-100">
         <div className="relative text-gray-400">
-          <span className="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2">search</span>
-          <input type="text" placeholder="Rechercher par pseudo ou email" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+          <span className="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2">
+            search
+          </span>
+          <input
+            type="text"
+            placeholder="Rechercher par pseudo ou email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 text-noir"
           />
         </div>
@@ -101,14 +114,15 @@ export default function BackofficeUsersMobile({users: initialUsers, onUpdateUser
           // 2. Si succès, mettre à jour l'état local pour déclencher l'animation et le rendu
           if (result.success) {
             setUsers((prevUsers) =>
-              prevUsers.map((u) => u.id === user.id ? { ...u, roleId: newRoleId } : u,
-            ),);
+              prevUsers.map((u) =>
+                u.id === user.id ? { ...u, roleId: newRoleId } : u,
+              ),
+            );
           } else {
             console.log(result.error || "Erreur lors du changement de rôle");
           }
         };
         const handleDelete = async () => {
-
           const result = await onDeleteUser(user.id);
 
           if (result.success) {
@@ -198,7 +212,10 @@ export default function BackofficeUsersMobile({users: initialUsers, onUpdateUser
                           {user.username}
                         </p>
                         <p className="text-gray-500 text-sm">{user.email}</p>
-                         <p className="text-gray-500 text-sm">Dernière modification le{" "}{new Date(user.createdAt).toLocaleDateString("fr-FR")}</p>
+                        <p className="text-gray-500 text-sm">
+                          Dernière modification le{" "}
+                          {new Date(user.createdAt).toLocaleDateString("fr-FR")}
+                        </p>
                       </div>
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-medium ${isAdmin ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}`}
@@ -225,9 +242,17 @@ export default function BackofficeUsersMobile({users: initialUsers, onUpdateUser
                         </button>
                       </div>
                     </div>
-                     <div className="flex p-2.5 items-center justify-between py-6">
-                        <button type="button" className="text-red-800 flex gap-3 font-bold" onClick={handleDelete}>
-                             <span className="material-symbols-rounded">person_remove</span> Supprimer cet utilisateur</button>
+                    <div className="flex p-2.5 items-center justify-between py-6">
+                      <button
+                        type="button"
+                        className="text-red-800 flex gap-3 font-bold"
+                        onClick={handleDelete}
+                      >
+                        <span className="material-symbols-rounded">
+                          person_remove
+                        </span>{" "}
+                        Supprimer cet utilisateur
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -237,8 +262,7 @@ export default function BackofficeUsersMobile({users: initialUsers, onUpdateUser
         );
       })}
 
-      <div ref={observerRef} className="h-[50px]">
-      </div>
+      <div ref={observerRef} className="h-[50px]"></div>
     </div>
   );
 }

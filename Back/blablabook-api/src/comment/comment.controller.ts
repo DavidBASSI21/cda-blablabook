@@ -6,6 +6,9 @@ import {
   Request,
   Query,
   UseGuards,
+  Param,
+  ParseIntPipe,
+  Req
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -32,6 +35,12 @@ export class CommentController {
     return this.service.latestCommentPerBook(
       Number.isFinite(n) ? Math.min(n, 10) : 10,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post(':id/report')
+  report(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    return this.service.reportComment(id, req.user.id);
   }
 
   @UseGuards(AuthGuard)

@@ -6,15 +6,16 @@ import { getUploadUrl } from "@/lib/utils";
 import UserBookLibrary from "@/components/Profil/UserBookLibrary";
 import { auth } from "@/auth.config";
 
-type Params = { id: string };
+type Params = Promise<{ id: string }> | { id: string };
 
-export default async function Page({ params }: { params: Promise<Params> }) {
+export default async function Page({ params }: { params: Params }) {
   const session = await auth();
   const token = session?.accessToken ?? null;
   const currentUserId = session?.user ? Number(session.user.id) : null;
 
-  const { id } = await params;
-  const profileUserId = Number(id);
+  // Await params to get the id
+  const resolvedParams = await Promise.resolve(params);
+  const profileUserId = Number(resolvedParams.id);
 
   // Fetch the user profile data
   let userData;

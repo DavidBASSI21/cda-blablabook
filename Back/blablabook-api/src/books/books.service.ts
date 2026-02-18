@@ -60,12 +60,12 @@ export class BooksService {
         if (!edition) continue;
         // Préparation des données :
         // Extraction de l'année de publication
-        let pubDate: Date | null = null;
+        let pubDate: string | null = null;
         const rawDate = edition.publish_date;
         if (rawDate) {
           const yearMatch = rawDate.match(/\d{4}/);
           if (yearMatch) {
-            pubDate = new Date(parseInt(yearMatch[0]), 0, 1);
+            pubDate = new Date(parseInt(yearMatch[0]), 0, 1).toString();
           }
         }
         // Récupération de l'isbn
@@ -108,8 +108,7 @@ export class BooksService {
             title: edition.title || doc.title || 'Inconnu',
             author: doc.author_name?.join(', ') || 'Auteur inconnu',
             page_count: edition.number_of_pages ?? 0,
-            category: 'unknown',
-            publishing_date: pubDate,
+            publishing_date: pubDate || Date(),
             summary: summary,
             publisher: edition.publishers?.[0] || null,
             isbn: isbn || null,
@@ -403,12 +402,12 @@ export class BooksService {
     const edition = editionResponse?.data;
     if (!edition) return null;
 
-    let pubDate: Date | null = null;
+    let pubDate: string | null = null;
     const rawDate = edition.publish_date;
     if (rawDate) {
       const yearMatch = rawDate.match(/\d{4}/);
       if (yearMatch) {
-        pubDate = new Date(parseInt(yearMatch[0]), 0, 1);
+        pubDate = new Date(parseInt(yearMatch[0]), 0, 1).toString();
       }
     }
     const isbn = edition.isbn_13?.[0] || edition.isbn_10?.[0];
@@ -448,8 +447,7 @@ export class BooksService {
           title: edition.title || 'Inconnu',
           author: book.author_name?.join(', ') || 'Auteur inconnu',
           page_count: edition.number_of_pages ?? 0,
-          category: 'unknown',
-          publishing_date: pubDate,
+          publishing_date: pubDate || Date(),
           summary: summary,
           publisher: edition.publishers?.[0] || null,
           isbn: isbn || null,
