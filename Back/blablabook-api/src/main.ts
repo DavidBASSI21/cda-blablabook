@@ -11,14 +11,17 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  const corsOptions = {
-    origin: process.env.FRONT_URL ? [process.env.FRONT_URL] : [],
-    credentials: true, // Permet d'envoyer des cookies
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  };
+  // const corsOptions = {
+  //   origin: process.env.FRONT_URL ? [process.env.FRONT_URL] : [],
+  //   credentials: true, // Permet d'envoyer des cookies
+  //   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  //   allowedHeaders: ['Content-Type', 'Authorization'],
+  // };
 
-  app.enableCors(corsOptions);
+  app.enableCors({
+    origin: ['https://blablabook-ten.vercel.app/'],
+    credentials: true,
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
