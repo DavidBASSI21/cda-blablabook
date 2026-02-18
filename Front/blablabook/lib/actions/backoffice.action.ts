@@ -20,7 +20,6 @@ export type User = {
 
 export type Comment = {
   id: number;
-  reportCounter: number;
   title: string;
   content: string;
   user: User;
@@ -28,8 +27,10 @@ export type Comment = {
   updatedAt: string;
 }
 
+const url = process.env.NEXT_PUBLIC_API_URL ?? "http://api:3000";
+
 export const getUserCount = async () => {
-  const res = await fetch(`http://api:3000/users/user-count`, {
+  const res = await fetch(`${url}/users/user-count`, {
     method: "GET"
   });
 
@@ -39,7 +40,7 @@ export const getUserCount = async () => {
 };
 
 export const getCommentCount = async () => {
-  const res = await fetch(`http://api:3000/comments/comment-count`, {
+  const res = await fetch(`${url}/comments/comment-count`, {
     method: "GET"
   });
 
@@ -49,7 +50,7 @@ export const getCommentCount = async () => {
 };
 
 export const getReportedCommentCount = async () => {
-  const res = await fetch(`http://api:3000/comments/reported-comment-count`, {
+  const res = await fetch(`${url}/comments/reported-comment-count`, {
     method: "GET"
   });
 
@@ -59,7 +60,7 @@ export const getReportedCommentCount = async () => {
 };
 
 export const getBookReadCount = async () => {
-  const res = await fetch(`http://api:3000/userbook/book-read-count`, {
+  const res = await fetch(`${url}/userbook/book-read-count`, {
     method: "GET"
   });
 
@@ -105,7 +106,7 @@ export const updateUserRole = async (userId: number, newRoleId: number) => {
         error: "Non authentifié",
       };
     }
-    const res = await fetch(`http://api:3000/users/${userId}/role`, {
+    const res = await fetch(`${url}/users/${userId}/role`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -149,7 +150,7 @@ export const removeUser = async (userId: number) => {
         error: "Non authentifié",
       };
     }
-    const res = await fetch(`http://api:3000/users/${userId}`, {
+    const res = await fetch(`${url}/users/${userId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -214,7 +215,6 @@ export const getAllCommentsToModerate = async (
     //   message: "Récupération des critiques à modérer effectuée avec succès",
     // };
     return data;
-
   } catch (error) {
     console.error("Error fetching comments to moderate : ", error);
     return {

@@ -84,7 +84,6 @@ model UserBook {
 model Comment {
   id            Int               @id @default(autoincrement()) @db.SmallInt
   title         String            @db.VarChar(255)
-  reportCounter Int               @default(0)
   content       String            @db.Text
   date          DateTime          @default(now())
   status        CommentStatusEnum @default(ACTIVE)
@@ -126,7 +125,7 @@ enum UserBookStatusEnum {
 
 enum CommentStatusEnum {
   ACTIVE
-  REPORTED
+  APPROVED
   HIDDEN
 
   @@map("comment_status")
