@@ -34,7 +34,6 @@ export class CommentService {
         },
       },
     });
-    console.log('Comments found in DB:', comments.length);
     return comments.filter((comment) => comment._count.reports >= 5);
   }
 
@@ -49,7 +48,7 @@ export class CommentService {
       FROM comment c
       INNER JOIN "commentReport" cr ON c.id = cr."commentId"
       GROUP BY c.id
-      HAVING COUNT(cr.id) >= 5 AND NOT c.status = 'HIDDEN'
+      HAVING COUNT(cr.id) >= 5 AND c.status = 'ACTIVE'
     `;
     return { count: result[0]?.count || 0 };
   }
@@ -59,6 +58,7 @@ export class CommentService {
       this.prisma.comment.findMany({
         skip,
         take,
+        where: { status: { in: ['ACTIVE', 'APPROVED'] } },
       }),
     ]);
     return { data };
@@ -76,7 +76,6 @@ export class CommentService {
       data: {
         title: dto.title,
         content: dto.content,
-
         status: 'ACTIVE',
         date: new Date(),
 
@@ -139,9 +138,7 @@ export class CommentService {
 
   async latestCommentPerBook(take = 10) {
     return this.prisma.comment.findMany({
-      where: {
-        status: 'ACTIVE',
-      },
+      where: { status: { in: ['ACTIVE', 'APPROVED'] } },
       orderBy: {
         date: 'desc',
       },
@@ -163,9 +160,7 @@ export class CommentService {
   async numbeOfCommentsPerBook(take = 10) {
     const groupedComments = await this.prisma.comment.groupBy({
       by: ['bookId'],
-      where: {
-        status: 'ACTIVE',
-      },
+      where: { status: { in: ['ACTIVE', 'APPROVED'] } },
       _count: {
         bookId: true,
       },

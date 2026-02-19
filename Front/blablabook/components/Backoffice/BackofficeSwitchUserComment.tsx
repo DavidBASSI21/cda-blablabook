@@ -1,6 +1,7 @@
 'use client';
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
+import BackofficeCommentsTableDesktop from "./BackofficeCommentsTableDesktop";
 import { User, Comment } from "@/lib/actions/backoffice.action";
 import BackofficeUsersMobile from "./BackofficeUsersDrawerMobile";
 import BackofficeCommentsDrawerMobile from "./BackofficeCommentsDrawerMobile";
@@ -39,10 +40,6 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, comm
     
     const [activeTab, setActiveTab] = useState<'users' | 'reportedComments'>('users');
 
-    useEffect(() => {
-       console.log("activeTab", activeTab);
-    }, [activeTab]);
-
     return (
         <>
             <div className="flex">
@@ -68,9 +65,9 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, comm
             }
             {activeTab === 'reportedComments' && 
                 <>
-                {/* <div className="hidden lg:block">
-                    <BackofficeUsersTableDesktop  users={users} totalUserCount={totalUserCount} onDeleteUser={onDeleteUser} onUpdateUserRole={onUpdateUserRole}/>
-                </div> */}
+                <div className="hidden lg:block">
+                    <BackofficeCommentsTableDesktop commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
+                </div>
                 <div className="lg:hidden">
                     <BackofficeCommentsDrawerMobile commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
                 </div>
