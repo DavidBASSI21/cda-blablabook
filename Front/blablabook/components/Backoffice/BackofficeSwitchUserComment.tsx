@@ -4,6 +4,7 @@ import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
 import { User, Comment } from "@/lib/actions/backoffice.action";
 import BackofficeUsersMobile from "./BackofficeUsersDrawerMobile";
 import BackofficeCommentsDrawerMobile from "./BackofficeCommentsDrawerMobile";
+import BackofficeCommentsTableDesktop from "./BackofficeCommentsTableDesktop";
 
 export type DeleteUserAction = (userId: number) => Promise<{ success: boolean; error?: string }>;
 export type UpdateUserRoleAction = (userId: number, newRoleId: number) => Promise<{ success: boolean; error?: string}> 
@@ -71,6 +72,9 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, comm
                 {/* <div className="hidden lg:block">
                     <BackofficeUsersTableDesktop  users={users} totalUserCount={totalUserCount} onDeleteUser={onDeleteUser} onUpdateUserRole={onUpdateUserRole}/>
                 </div> */}
+                 <div className="hidden lg:block">
+                    <BackofficeCommentsTableDesktop commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
+                </div>
                 <div className="lg:hidden">
                     <BackofficeCommentsDrawerMobile commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
                 </div>

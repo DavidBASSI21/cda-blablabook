@@ -35,7 +35,7 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
           setLoading(true);
           const nextPage = page + 1;
           const res = await getAllCommentsToModerate(nextPage, pageSize);
-          // On ajoute les nouveaux utilisateurs à la suite des anciens
+          // On ajoute les nouveaux commentaires à la suite des anciens
           setComments((prev) => [...prev, ...res.data]);
           setPage(nextPage);
           // On vérifie si on a atteint le bout de la base de données
@@ -48,13 +48,19 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
   }, [hasMore, loading, page, comments.length]);
- return (
-<div className="w-full flex flex-col gap-2">
+  return (
+    <div className="w-full flex flex-col gap-2">
+      {totalCommentsToModerateCount === 0 &&
+        <div className="bg-blue-100 rounded-md px-4 py-2 flex items-center gap-2 mt-4 justify-center shadow-sm">
+          <p className="text-slate-700 font-medium">Aucune critique à modérer pour le moment</p>
+          <span className="material-symbols-rounded text-slate-700">task_alt</span>
+        </div>
+        
+      }
       {comments.map((commentToModerate) => {
 
         const handleDisapproveComment = async() => {
           const result = await onDisapproveComment(commentToModerate.id, "HIDDEN");
-          console.log('ON REFUSE LA CRITIQUE ET ON LA MASQUE! ')
           if(result.success) {
             setComments((prevComments) => prevComments.filter((c) => c.id !== commentToModerate.id));
             router.refresh();
@@ -65,7 +71,6 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
 
         const handleApproveComment = async() => {
           const result = await onApproveComment(commentToModerate.id, "APPROVED");
-          console.log("ON ACCEPTE LA CRITIQUE ET ELLE DISPARAIT !")
           if(result.success) {
             setComments((prevComments) => prevComments.filter((c) => c.id !== commentToModerate.id));
             router.refresh();
@@ -114,13 +119,17 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
             </Drawer.Trigger>
             <Drawer.Portal>
               <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
-              <Drawer.Content className="bg-gray-100 flex flex-col rounded-t-[10px] mt-24 h-fit fixed bottom-0 left-0 right-0 outline-none z-50 antialiased">
-                <div className="p-4 bg-white rounded-t-[10px] flex-1">
-                  <div aria-hidden className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300 mb-8"/>
-                  <div className="max-w-md mx-auto">
-                    <Drawer.Title className="font-medium mb-4 text-gray-900 flex justify-center">
-                      {/* Avatar Section */}
-                      <div className="w-24 h-24 rounded-full overflow-hidden shrink-0">
+              <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-[85%] fixed bottom-0 left-0 right-0 outline-none z-50 antialiased">
+                <div className="mx-auto w-12 h-1.5 shrink-0 rounded-full bg-gray-300 my-4" />
+
+                {/* Zone scrollable */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  <div className="max-w-md mx-auto space-y-6">
+                    
+                  <div className="flex flex-col gap-4">
+                    {/* Section Avatar centrée */}
+                    <div className="flex justify-center w-full">
+                      <div className="w-24 h-24 rounded-full overflow-hidden bg-blue-300">
                         {commentToModerate.user.profilePicture ? (
                           <Image
                             src={getUploadUrl(commentToModerate.user.profilePicture)}
@@ -130,46 +139,59 @@ export default function BackofficeCommentsDrawerMobile({ commentsToModerate = []
                             alt={commentToModerate.user.username}
                           />
                         ) : (
-                          <div className="bg-blue-300 w-full h-full flex items-center justify-center">
-                            <span className="material-symbols-rounded text-blue-950 text-4xl">
-                              hide_image
-                            </span>
-                          </div>
+                          <span className="material-symbols-rounded text-blue-950 text-5xl flex items-center justify-center h-full">
+                            person
+                          </span>
                         )}
                       </div>
-                    </Drawer.Title>
-
-                    <div className="flex border-b border-b-gray-200 p-2.5 items-center justify-between">
+                    </div>
+                    <div className="flex items-start justify-between w-full px-1">
                       <div className="flex flex-col">
-                        <p className="text-noir text-xl font-semibold leading-tight">
+                        <Drawer.Title className="text-xl font-bold text-noir leading-none">
                           {commentToModerate.user.username}
+                        </Drawer.Title>
+                        <p className="text-gray-400 text-sm mt-1">
+                          {commentToModerate.user.email}
                         </p>
-                        <p className="text-gray-500 text-sm">{commentToModerate.user.email}</p>
                       </div>
-                      <span
-                        className="rounded-full px-2 py-1 text-s font-medium bg-orange-100 text-orange-800 flex items-center"
-                      >
-                       {commentToModerate._count.reports} <span className="material-symbols-rounded">report</span>
-                      </span>
-                    </div>
 
-                    <div className="flex border-b border-b-gray-200 p-2.5 items-center justify-between py-6">
-                      <div className="pr-4">
-                        <p className="text-noir text-lg font-semibold leading-tight">
-                            {commentToModerate.title}
-                        </p>
-                        <p className="text-gray-500 text-sm">
-                            {commentToModerate.content}
-                        </p>
+                      <div className="rounded-full flex items-center gap-2 justify-center px-2 py-1 text-s font-medium bg-orange-100 text-orange-800">
+                         <span className="rounded-full flex items-center gap-2 justify-center px-2 py-1 text-s font-medium bg-orange-100 text-orange-800">
+                          {commentToModerate._count.reports} <span className="material-symbols-rounded">report</span>
+                         </span>
                       </div>
-                    </div>
-                     <div className="flex p-2.5 items-center justify-center gap-12 py-6">
-                        <button type="button" onClick={handleDisapproveComment} className="cursor-pointer h-16 w-16 flex justify-center items-center rounded-full text-white bg-linear-to-b from-red-400 to-rose-500 shadow-md active:scale-95 transition-transform">
-                        <span className="w-9 h-9 material-symbols-rounded text-4xl text-[36px]!">chat_bubble_off</span> </button>
-                         <button type="button" onClick={handleApproveComment} className="cursor-pointer h-16 w-16 flex justify-center items-center rounded-full text-white bg-linear-to-b from-green-400 to-emerald-300 shadow-md active:scale-95 transition-transform">
-                        <span className="w-9 h-9 material-symbols-rounded text-4xl text-[36px]!">mark_chat_read</span> </button>
                     </div>
                   </div>
+
+                  <hr className="border-gray-100 my-4" />
+
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-lg text-noir">{commentToModerate.title}</h4>
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+                        {commentToModerate.content}
+                      </p>
+                    </div>
+                    
+                    {/* On ajoute un peu d'espace en bas pour ne pas que le texte soit caché par les boutons */}
+                    <div className="h-24" />
+                  </div>
+                </div>
+
+                {/* Actions : Fixées en bas du Drawer */}
+                <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-center gap-8 pb-8">
+                  <button 
+                    onClick={handleDisapproveComment} 
+                    className="h-14 w-14 flex justify-center items-center rounded-full text-white bg-gradient-to-b from-red-400 to-rose-500 shadow-lg active:scale-90 transition-transform"
+                  >
+                    <span className="material-symbols-rounded text-2xl">chat_bubble_off</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleApproveComment} 
+                    className="h-14 w-14 flex justify-center items-center rounded-full text-white bg-gradient-to-b from-green-400 to-emerald-500 shadow-lg active:scale-90 transition-transform"
+                  >
+                    <span className="material-symbols-rounded text-2xl">mark_chat_read</span>
+                  </button>
                 </div>
               </Drawer.Content>
             </Drawer.Portal>

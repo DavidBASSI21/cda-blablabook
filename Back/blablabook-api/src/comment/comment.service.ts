@@ -27,7 +27,12 @@ export class CommentService {
           select: { reports: true },
         },
         user: {
-          select: { id: true, username: true },
+          select: {
+            id: true,
+            username: true,
+            profilePicture: true,
+            email: true,
+          },
         },
         book: {
           select: { id: true, title: true, author: true },
