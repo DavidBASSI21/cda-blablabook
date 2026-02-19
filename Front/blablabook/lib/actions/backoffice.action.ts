@@ -54,8 +54,6 @@ export const getUserCount = async () => {
 };
 
 export const getCommentCount = async () => {
-
-  console.log("Fetching comment count...");
   const session = await auth();
   const token = (session as Session)?.accessToken;
   const res = await fetch(`${url}/comments/comment-count`, {
@@ -70,13 +68,19 @@ export const getCommentCount = async () => {
 };
 
 export const getReportedCommentCount = async () => {
-  const session = await auth();
-  const token = (session as Session)?.accessToken;
+   const session = await auth();
+    const token = (session as Session)?.accessToken;
+    if (!token) {
+      return {
+        success: false,
+        error: "Non authentifié",
+      };
+    }
   const res = await fetch(`${url}/comments/reported-comment-count`, {
     method: "GET",
-    headers : {
-      Authorization: `Bearer ${token}`,
-    }
+        headers: {
+           Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!res.ok) return { success: false, data: [] };
@@ -267,50 +271,6 @@ export const getAllCommentsToModerate = async (
     };
   }
 };
-
-// // //! GET ALL COMMMENTS TO MODERATE
-// export const getAllCommentsToModerate = async (
-//   page: number,
-//   limit: number,
-// ) => {
-//   try {
-//     const session = await auth();
-//     const token = (session as Session)?.accessToken;
-//     if (!token) {
-//       return {
-//         success: false,
-//         error: "Non authentifié",
-//       };
-//     }
-//     const res = await fetch(
-//       `http://api:3000/comments/comments-to-moderate?page=${page}&limit=${limit}`,
-//       {
-//         cache: "no-store",
-//         method: "GET",
-//         headers: {
-//           "Content-Type": "application/json",
-//            Authorization: `Bearer ${token}`,
-//         },
-//       },
-//     );
-  
-    
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch commments to moderate");
-//     }
-  
-//     const data = await res.json();
-  
-//     return data;
-
-//   } catch (error) {
-//     console.error("Error updating profile:", error);
-//     return {
-//       success: false,
-//       error: "Une erreur est survenue lors de la mise à jour du profil",
-//     };
-//   }
-// };
 
 //! APPROVE COMMENT
 export const approveComment = async (commentId: number, newStatus: string) => {
