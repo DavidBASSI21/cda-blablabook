@@ -60,13 +60,15 @@ export default async function DernieresCritiques() {
               className="h-full flex flex-col rounded-md border bg-white p-5 shadow-sm hover:shadow-md transition"
             >
               <div className="flex gap-4">
-                <Image
-                  src={c.book.cover}
-                  alt={c.book.title}
-                  fill
-                  className="w-16 sm:w-20 h-24 sm:h-28 object-cover rounded-lg border"
-                  loading="lazy"
-                />
+                <div className="relative w-16 sm:w-20 h-24 sm:h-28 shrink-0">
+                  <Image
+                    src={c.book.cover}
+                    alt={c.book.title}
+                    fill
+                    className="object-cover rounded-lg border"
+                    loading="lazy"
+                  />
+                </div>
 
                 <div className="min-w-0 flex-1">
                   <h2 className="text-base sm:text-lg font-semibold text-black truncate">
