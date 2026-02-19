@@ -1,6 +1,7 @@
 "use client";
 import { Comment, getAllCommentsToModerate } from "@/lib/actions/backoffice.action";
 import DialogForCommentCellTable from "./DialogForCommentCellTable";
+import { useRouter } from "next/navigation";
 import {
   createColumnHelper,
   flexRender,
@@ -212,6 +213,7 @@ export default function BackofficeCommentsTableDesktop({
   onApproveComment: ApproveCommentAction;
   onDisapproveComment: DisapproveCommentAction;
 }) {
+  const router = useRouter()
   const [data, setData] = useState(commentsToModerate);
   const [total, setTotal] = useState(totalCommentsToModerateCount);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -271,6 +273,7 @@ export default function BackofficeCommentsTableDesktop({
         if (result.success) {
           setData((prev) => prev.filter((comment) => comment.id !== commentId));
           setTotal((prev) => prev - 1);
+          router.refresh();
         } else {
           alert(result.error || "Erreur lors de l'approbation de la critique");
         }
@@ -280,6 +283,7 @@ export default function BackofficeCommentsTableDesktop({
         if (result.success) {
           setData((prev) => prev.filter((comment) => comment.id !== commentId));
           setTotal((prev) => prev - 1);
+          router.refresh();
         } else {
           alert(result.error || "Erreur lors du masquage de la critique");
         }

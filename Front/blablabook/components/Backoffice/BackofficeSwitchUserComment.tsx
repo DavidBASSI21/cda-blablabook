@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
 import BackofficeCommentsTableDesktop from "./BackofficeCommentsTableDesktop";
 import { User, Comment } from "@/lib/actions/backoffice.action";
@@ -35,11 +35,12 @@ interface BackofficeSwitchProps {
 
 }
 
-export default function BackofficeSwitchUserComment({users, totalUserCount, commentsToModerate, totalCommentsToModerateCount, onDeleteUser, onUpdateUserRole, onApproveComment, onDisapproveComment}: BackofficeSwitchProps) {
+export default function BackofficeSwitchUserComment({users, totalUserCount, commentsToModerate : initialComments, totalCommentsToModerateCount : initialCommentsCount, onDeleteUser, onUpdateUserRole, onApproveComment, onDisapproveComment}: BackofficeSwitchProps) {
 
     
     const [activeTab, setActiveTab] = useState<'users' | 'reportedComments'>('users');
-
+    const comments = initialComments;
+    const totalComments = initialCommentsCount;
     return (
         <>
             <div className="flex">
@@ -66,10 +67,10 @@ export default function BackofficeSwitchUserComment({users, totalUserCount, comm
             {activeTab === 'reportedComments' && 
                 <>
                  <div className="hidden lg:block">
-                    <BackofficeCommentsTableDesktop commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
+                    <BackofficeCommentsTableDesktop key={`desktop-${totalComments}`} commentsToModerate={comments} totalCommentsToModerateCount={totalComments} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
                 </div>
                 <div className="lg:hidden">
-                    <BackofficeCommentsDrawerMobile commentsToModerate={commentsToModerate} totalCommentsToModerateCount={totalCommentsToModerateCount} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
+                    <BackofficeCommentsDrawerMobile key={`mobile-${totalComments}`} commentsToModerate={comments} totalCommentsToModerateCount={totalComments} onApproveComment={onApproveComment} onDisapproveComment={onDisapproveComment}/>
                 </div>
                 </>
             }
