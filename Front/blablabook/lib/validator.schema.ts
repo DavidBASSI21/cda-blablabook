@@ -15,6 +15,7 @@ export const registerSchema = z
     password: z
       .string()
       .min(12, "Le mot de passe doit contenir au moins 12 caractères")
+      .max(64, "Le mot de passe ne peut pas dépasser 64 caractères")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
         "Le mot de passe doit contenir au moins une minuscule, une majuscule, un chiffre et un caractère spécial"
@@ -32,7 +33,7 @@ export const registerSchema = z
 //! LOGIN SCHEMA
 export const loginSchema = z.object({
   email: z.string().email("Veuillez entrer une adresse email valide"),
-  password: z.string().min(1, "Le mot de passe est obligatoire"),
+  password: z.string().min(1, "Le mot de passe est obligatoire").max(64, "Le mot de passe ne peut pas dépasser 64 caractères"),
 });
 
 //! EDIT PROFILE SCHEMA

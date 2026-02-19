@@ -9,7 +9,6 @@ type Book = {
 	title: string;
 	page_count: number;
 	author: string;
-	category: string;
 	publishing_date: Date;
 	summary: string;
 	publisher: string;

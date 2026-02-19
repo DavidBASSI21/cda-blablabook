@@ -5,7 +5,6 @@ type BooksResponse = {
   title: string;
   page_count: number;
   author: string;
-  category: string;
   publishing_date: Date;
   summary: string;
   publisher: string;
@@ -29,7 +28,6 @@ interface Book {
   title: string;
   page_count: number;
   author: string;
-  category: string;
   publishing_date: Date | null;
   summary: string | null;
   publisher: string | null;

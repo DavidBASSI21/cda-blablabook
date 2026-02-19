@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -6,35 +10,63 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 export class CommentService {
   constructor(private prisma: PrismaService) {}
 
-  async getCommentCount() {
-    const count = await this.prisma.comment.count();
-    return { count };
-  }
-
-  async getReportedCommentCount() {
-    const count = await this.prisma.comment.count({
+  async getCommentsToModerate(page: number = 0, limit: number = 10) {
+    const skip = page * limit;
+    const take = limit;
+    const comments = await this.prisma.comment.findMany({
+      skip,
+      take,
       where: {
-        reportCounter: {
-          gte: 5,
+        status: 'ACTIVE',
+        reports: {
+          some: {},
+        },
+      },
+      include: {
+        _count: {
+          select: { reports: true },
+        },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: true,
+            email: true,
+          },
+        },
+        book: {
+          select: { id: true, title: true, author: true },
         },
       },
     });
+    return comments.filter((comment) => comment._count.reports >= 5);
+  }
 
-    return { count };
+  async getCommentCount() {
+    const result = await this.prisma.comment.count();
+    return { count: result };
+  }
+
+  async getReportedCommentCount() {
+    const result = await this.prisma.$queryRaw<[{ count: number }]>`
+      SELECT COUNT(DISTINCT c.id)::int as count
+      FROM comment c
+      INNER JOIN "commentReport" cr ON c.id = cr."commentId"
+      GROUP BY c.id
+      HAVING COUNT(cr.id) >= 5 AND c.status = 'ACTIVE'
+    `;
+    return { count: result[0]?.count || 0 };
   }
 
   async findAll(skip: number, take: number) {
-    const [data, total] = await Promise.all([
+    const [data] = await Promise.all([
       this.prisma.comment.findMany({
         skip,
         take,
-        where: {
-          reportCounter: { gte: 5 },
-        },
+        where: { status: { in: ['ACTIVE', 'APPROVED'] } },
       }),
-      this.prisma.comment.count(),
     ]);
-    return { data, total };
+    return { data };
   }
 
   async createComment(userId: number, dto: CreateCommentDto) {
@@ -49,8 +81,6 @@ export class CommentService {
       data: {
         title: dto.title,
         content: dto.content,
-
-        reportCounter: 0,
         status: 'ACTIVE',
         date: new Date(),
 
@@ -67,23 +97,19 @@ export class CommentService {
   async reportComment(commentId: number, userId: number) {
     const exists = await this.prisma.comment.findUnique({
       where: { id: commentId },
-      select: { id: true },
+      select: { id: true, status: true },
     });
     if (!exists) throw new NotFoundException('Commentaire introuvable');
-
     try {
       await this.prisma.$transaction([
         this.prisma.commentReport.create({
           data: { commentId, userId },
         }),
-        this.prisma.comment.update({
-          where: { id: commentId },
-          data: { reportCounter: { increment: 1 } },
-        }),
       ]);
 
       return { ok: true };
     } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (e?.code === 'P2002') {
         throw new ConflictException('Déjà signalé');
       }
@@ -91,11 +117,33 @@ export class CommentService {
     }
   }
 
+  async approveComment(commentId: number) {
+    const exists = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { id: true, status: true },
+    });
+    if (!exists) throw new NotFoundException('Commentaire introuvable');
+    return this.prisma.comment.update({
+      where: { id: commentId },
+      data: { status: 'APPROVED' },
+    });
+  }
+
+  async rejectComment(commentId: number) {
+    const exists = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { id: true, status: true },
+    });
+    if (!exists) throw new NotFoundException('Commentaire introuvable');
+    return this.prisma.comment.update({
+      where: { id: commentId },
+      data: { status: 'HIDDEN' },
+    });
+  }
+
   async latestCommentPerBook(take = 10) {
     return this.prisma.comment.findMany({
-      where: {
-        status: 'ACTIVE',
-      },
+      where: { status: { in: ['ACTIVE', 'APPROVED'] } },
       orderBy: {
         date: 'desc',
       },
@@ -117,9 +165,7 @@ export class CommentService {
   async numbeOfCommentsPerBook(take = 10) {
     const groupedComments = await this.prisma.comment.groupBy({
       by: ['bookId'],
-      where: {
-        status: 'ACTIVE',
-      },
+      where: { status: { in: ['ACTIVE', 'APPROVED'] } },
       _count: {
         bookId: true,
       },

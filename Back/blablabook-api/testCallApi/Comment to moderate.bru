@@ -1,0 +1,15 @@
+meta {
+  name: Comment to moderate
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:3000/comments/comments-to-moderate
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidHlwZSI6ImF1dGgiLCJpYXQiOjE3NzE0MjkzNDIsImV4cCI6MTc3MjAzNDE0Mn0.kgY2xkPUSTsrqflQtbHpgbPmY58mSlQ-X0NjDNLEkfs
+}
