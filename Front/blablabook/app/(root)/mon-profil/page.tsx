@@ -49,7 +49,7 @@ export default async function page() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 sm:gap-3">
+          <div className="flex col gap-2 sm:gap-3">
             <Link
               href={"/mon-profil/modifier"}
               title="Modifier mon profil"
