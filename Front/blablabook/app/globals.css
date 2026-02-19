@@ -60,10 +60,10 @@ body {
 }
 
 .button-switch-backoffice-active {
-  @apply text-noir w-48 font-bold text-base text-left font-one
+  @apply text-noir w-48 font-bold text-base text-left font-one cursor-pointer
 }
 .button-switch-backoffice-inactive {
-  @apply text-gray-500 w-48 font-bold text-start font-one
+  @apply text-gray-500 w-48 font-bold text-start font-one cursor-pointer
 }
 
 .toggle-btn {

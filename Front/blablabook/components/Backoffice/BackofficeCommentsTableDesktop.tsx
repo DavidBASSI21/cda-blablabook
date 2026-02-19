@@ -3,6 +3,7 @@ import {
   Comment,
   getAllCommentsToModerate,
 } from "@/lib/actions/backoffice.action";
+import DialogForCommentCellTable from "./DialogForCommentCellTable";
 import { useRouter } from "next/navigation";
 import {
   createColumnHelper,
@@ -18,7 +19,6 @@ import {
   ApproveCommentAction,
   DisapproveCommentAction,
 } from "./BackofficeSwitchUserComment";
-import DialogForCommentCellTable from "./DialogForCommentCellTable";
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
     approveComment?: (commentId: number, newStatus: string) => Promise<void>;

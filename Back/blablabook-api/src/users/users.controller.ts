@@ -37,7 +37,6 @@ import { OptionalAuthGuard } from 'src/auth/guards/optional-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // It would be a good idea to protect some of the routes to be used only by authenticated (admin) users.
   //! CREATE NEW USER
   @Post()
   create(@Body() data: NewUserDTO) {

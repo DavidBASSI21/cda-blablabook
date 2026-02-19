@@ -135,7 +135,7 @@ export default function CommentsSection({
             <button
               onClick={() => setIsModalOpen(true)}
               disabled={!canComment}
-              className="gap-1 text-center rounded-md bg-[#A7A0C9] w-full px-3 py-2 text-sm font-medium text-white hover:bg-[#8f88b8] disabled:opacity-50"
+              className="cursor-pointer gap-1 text-center rounded-md bg-[#A7A0C9] w-full px-3 py-2 text-sm font-medium text-white hover:bg-[#8f88b8] disabled:opacity-50"
               title={!canComment ? "Connecte-toi pour commenter" : undefined}
             >
               Ajouter un commentaire
