@@ -63,7 +63,8 @@ export default async function DernieresCritiques() {
                 <Image
                   src={c.book.cover}
                   alt={c.book.title}
-                  fill
+                  width={200}
+                  height={300}
                   className="w-16 sm:w-20 h-24 sm:h-28 object-cover rounded-lg border"
                   loading="lazy"
                 />
