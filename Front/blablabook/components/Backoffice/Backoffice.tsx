@@ -1,4 +1,7 @@
 import {
+  approveComment,
+  disapproveComment,
+  getAllCommentsToModerate,
   getBookReadCount,
   getCommentCount,
   getReportedCommentCount,
@@ -16,20 +19,23 @@ export default async function Backoffice() {
   const [
     resGetUsers,
     resUserCount,
+    resGetCommentsToModerate,
     resCommentCount,
     resReportedCommentCount,
     resBookReadCount,
   ] = await Promise.all([
     getUsers(0, 10),
     getUserCount(),
+    getAllCommentsToModerate(0, 10),
     getCommentCount(),
     getReportedCommentCount(),
     getBookReadCount(),
   ]);
 
-  //const users:User[] = resGetUsers.success ? resGetUsers : [];
   const initialUsers = resGetUsers.data || [];
   const totalUserCount = resGetUsers.total || 0;
+  const commentsToModerate = resGetCommentsToModerate.data || [];
+  const totalCommentsToModerateCount = resGetCommentsToModerate.total || 0;
   const userCount = resUserCount.success ? resUserCount.data.count : 0;
   const commentCount = resCommentCount.success ? resCommentCount.data.count : 0;
   const reportedCommentCount = resReportedCommentCount.success
@@ -74,6 +80,10 @@ export default async function Backoffice() {
           totalUserCount={totalUserCount}
           onDeleteUser={removeUser}
           onUpdateUserRole={updateUserRole}
+          onApproveComment={approveComment}
+          onDisapproveComment={disapproveComment}
+          commentsToModerate={commentsToModerate}
+          totalCommentsToModerateCount={totalCommentsToModerateCount}
         />
       </div>
     </section>

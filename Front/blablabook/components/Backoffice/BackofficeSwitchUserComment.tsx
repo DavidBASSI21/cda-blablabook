@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BackofficeUsersTableDesktop from "./BackofficeUsersTableDesktop";
 import BackofficeCommentsTableDesktop from "./BackofficeCommentsTableDesktop";
 import { User, Comment } from "@/lib/actions/backoffice.action";
