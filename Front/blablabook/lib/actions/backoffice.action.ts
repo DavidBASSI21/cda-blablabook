@@ -114,7 +114,7 @@ export const getUsers = async (
       };
     }
     const res = await fetch(
-      `http://api:3000/users?page=${page}&limit=${limit}&search=${search}`,
+      `${url}/users?page=${page}&limit=${limit}&search=${search}`,
       {
         cache: "no-store",
         method: "GET",
@@ -237,7 +237,7 @@ export const getAllCommentsToModerate = async (
       };
     }
     const res = await fetch(
-      `http://api:3000/comments/comments-to-moderate?page=${page}&limit=${limit}`,
+      `${url}/comments/comments-to-moderate?page=${page}&limit=${limit}`,
       {
         cache: "no-store",
         method: "GET",
@@ -283,7 +283,7 @@ export const approveComment = async (commentId: number, newStatus: string) => {
         error: "Non authentifié",
       };
     }
-    const res = await fetch(`http://api:3000/comments/${commentId}/approve`, {
+    const res = await fetch(`${url}/comments/${commentId}/approve`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -327,7 +327,7 @@ export const disapproveComment = async (commentId: number, newStatus: string) =>
         error: "Non authentifié",
       };
     }
-    const res = await fetch(`http://api:3000/comments/${commentId}/reject`, {
+    const res = await fetch(`${url}/comments/${commentId}/reject`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
