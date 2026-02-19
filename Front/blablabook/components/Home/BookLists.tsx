@@ -6,7 +6,6 @@ import {
 } from "@/lib/actions/book.action";
 import { auth } from "@/auth.config";
 import Carousel from "./Carousel";
-import { log } from "console";
 
 interface Book {
   id: number;
