@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -21,8 +20,6 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import express from 'express';
 import { UsersService } from './users.service';
-import { NewUserDTO } from './dto/new-user.dto';
-import { UpdateUserDTO } from './dto/update-user.dto';
 import {
   ApiBearerAuth,
   ApiTags,
@@ -31,20 +28,19 @@ import {
 import { SelfOrAdminGuard } from 'src/auth/guards/selfOrAdmin.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { OptionalAuthGuard } from 'src/auth/guards/optional-auth.guard';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { UpdateUserFormDataDTO } from './dto/update-user-form-data.dto';
+import { RoleId } from 'src/types/role.enum';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  //! CREATE NEW USER
-  @Post()
-  create(@Body() data: NewUserDTO) {
-    return this.usersService.create(data);
-  }
-
   //! GET ALL USERS
   @Get()
+  @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async findAll(
     @Query('page') page: string = '0',
@@ -62,12 +58,15 @@ export class UsersController {
   }
 
   @Get('user-count')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   async getUserCount() {
     return this.usersService.getUserCount();
   }
 
   //! GET PROFILE USER
   @Get('/profil/:id')
+  @ApiBearerAuth()
   @UseGuards(OptionalAuthGuard)
   async getprofileById(
     @Param('id', ParseIntPipe) id: number,
@@ -139,24 +138,31 @@ export class UsersController {
   })
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() data: UpdateUserDTO,
+    @Body() data: any,
     @Req() request: express.Request,
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    if (request.user?.roleId !== 1 && 'roleId' in data) {
+    const dto = plainToInstance(UpdateUserFormDataDTO, data);
+    const errors = await validate(dto);
+    console.log('dto:', dto);
+    console.log('Validation errors:', errors);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+    if ((request.user?.roleId as RoleId) !== RoleId.ADMIN && 'roleId' in dto) {
       throw new ForbiddenException(
         "Accès refusé : vous n'avez pas la permission de modifier le rôle de l'utilisateur",
       );
     }
     if (file) {
-      data.profilePicture = `/uploads/profiles/${file.filename}`;
+      dto.profilePicture = `/uploads/profiles/${file.filename}`;
     }
 
-    if (typeof data.isPrivate === 'string') {
-      data.isPrivate = data.isPrivate === 'true';
+    if (typeof dto.isPrivate === 'string') {
+      dto.isPrivate = dto.isPrivate === 'true';
     }
 
-    return this.usersService.update(id, data);
+    return this.usersService.update(id, dto);
   }
 
   //! UPDATE USER ROLE

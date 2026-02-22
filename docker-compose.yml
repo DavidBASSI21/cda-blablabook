@@ -20,6 +20,7 @@ services:
       dockerfile: Dockerfile
     container_name: blablabook-api
     environment:
+      - JWT_SECRET=${JWT_SECRET}
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - database
@@ -62,20 +63,20 @@ services:
       - /usr/src/app/node_modules
     env_file: ".env"
 
-  redis:
-    image: redis:8.4.0
-    container_name: redis
-    restart: always
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./redis-data:/data
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 5s
+  # redis:
+  #   image: redis:8.4.0
+  #   container_name: redis
+  #   restart: always
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - ./redis-data:/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "redis-cli ping"]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 5
+  #     start_period: 5s
 
   adminer:
     image: adminer:latest

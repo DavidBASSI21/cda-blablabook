@@ -36,10 +36,13 @@ export default function LibraryButton({
     if (!userId || initialUserBookId !== null) {
       return;
     }
-
+    
     const checkBook = async () => {
+      if (!token) {
+        return;
+      }
       setIsLoading(true);
-      const result = await checkIfBookInLibrary(userId, bookId);
+      const result = await checkIfBookInLibrary(userId, bookId, token);
       if (result.success && result.userBook) {
         setUserBookId(result.userBook.id);
       }
@@ -47,7 +50,7 @@ export default function LibraryButton({
     };
 
     checkBook();
-  }, [userId, bookId, initialUserBookId]);
+  }, [userId, bookId, initialUserBookId, token]);
 
   //! Ajouter
   const handleAdd = async () => {

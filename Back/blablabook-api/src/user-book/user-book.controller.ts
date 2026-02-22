@@ -8,11 +8,16 @@ import {
   ParseIntPipe,
   Patch,
   HttpCode,
+  UseGuards,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserBookService } from './user-book.service';
 // import { NewUserBookDto } from './dto/new-user-book.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserBookStatusEnum } from 'generated/prisma';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import express from 'express';
 // import { UpdateUserBookDto } from './dto/update-user-book.dto';
 
 @ApiTags('Userbook')
@@ -26,10 +31,18 @@ export class UserBookController {
   }
 
   @Post('/add/:userId/:bookId')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   create(
     @Param('userId', ParseIntPipe) userId: number,
     @Param('bookId', ParseIntPipe) bookId: number,
+    @Req() request: express.Request,
   ) {
+    if (request.user!.id !== userId) {
+      throw new UnauthorizedException(
+        "Vous n'avez pas la permission d'ajouter un livre à la bibliothèque d'un autre utilisateur",
+      );
+    }
     return this.userBookService.create({
       userId: userId,
       bookId: bookId,
@@ -37,23 +50,31 @@ export class UserBookController {
     });
   }
 
-  @Patch('/statut/:id')
+  @Patch('/status/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { status: UserBookStatusEnum },
+    @Req() request: express.Request,
   ) {
-    return this.userBookService.updateStatus(id, body.status);
+    if (request.user!.id !== id) {
+      throw new UnauthorizedException(
+        "Vous n'avez pas la permission de mettre à jour le statut de ce livre pour un autre utilisateur",
+      );
+    }
+    return this.userBookService.updateStatus(id, body.status, request.user!.id);
   }
 
-  @Get()
-  findAll() {
-    return this.userBookService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.userBookService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userBookService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.userBookService.findOne(+id);
+  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserBookDto: UpdateUserBookDto) {
@@ -61,8 +82,15 @@ export class UserBookController {
   // }
 
   @Delete('/remove/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string, @Req() request: express.Request) {
+    if (request.user!.id !== +id) {
+      throw new UnauthorizedException(
+        "Vous n'avez pas la permission de supprimer ce livre de la bibliothèque d'un autre utilisateur",
+      );
+    }
     return this.userBookService.remove(+id);
   }
 
@@ -71,10 +99,17 @@ export class UserBookController {
    * Vérifier si un livre fait partie de la liste userBook d'un utilisateur
    */
   @Get('check/:userId/:bookId')
+  @UseGuards(AuthGuard)
   checkIfBookInLibrary(
     @Param('userId', ParseIntPipe) userId: number,
     @Param('bookId', ParseIntPipe) bookId: number,
+    @Req() request: express.Request,
   ) {
+    if (request.user!.id !== userId) {
+      throw new UnauthorizedException(
+        "Vous n'avez pas la permission de vérifier la bibliothèque d'un autre utilisateur",
+      );
+    }
     return this.userBookService.checkIfBookInLibrary(userId, bookId);
   }
 }

@@ -6,17 +6,22 @@ meta {
 
 patch {
   url: http://localhost:3000/users/2
-  body: json
+  body: multipartForm
   auth: inherit
 }
 
 headers {
-  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidHlwZSI6ImF1dGgiLCJpYXQiOjE3Njk2OTIzNTcsImV4cCI6MTc3MDI5NzE1N30.GZ4E1DWHYYiGYCvr5MoR-yJNeAesfYQya0opi2qRnlU
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidHlwZSI6ImF1dGgiLCJpYXQiOjE3NzE2MDcxNDYsImV4cCI6MTc3MjIxMTk0Nn0.X2TEX755cxag3qnmOJfbHCVmp_LRdQJE-iaS5_u8fSs
   : 
 }
 
 body:json {
   {
-    "roleId": 2
+    "isPrivate": false
   }
+}
+
+body:multipart-form {
+  roleId: 1
+  profilePicture: 
 }

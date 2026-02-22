@@ -4,9 +4,10 @@ import { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User, Prisma } from 'generated/prisma/client';
 import { NewUserDTO } from './dto/new-user.dto';
-import { UpdateUserDTO } from './dto/update-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { UserWithRole } from './types/user.types';
+import { UpdateUserFormDataDTO } from './dto/update-user-form-data.dto';
+import { RoleId } from 'src/types/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,7 @@ export class UsersService {
         email: data.email,
         username: data.username,
         password: data.password,
-        roleId: data.roleId || 2,
+        roleId: data.roleId || RoleId.USER,
         isPrivate: data.isPrivate || false,
       },
       include: {
@@ -166,7 +167,7 @@ export class UsersService {
   }
 
   //! UPDATE USER BY ID
-  async update(id: number, data: UpdateUserDTO): Promise<User> {
+  async update(id: number, data: UpdateUserFormDataDTO): Promise<User> {
     const updateData = { ...data };
 
     if (data.password) {
@@ -196,21 +197,21 @@ export class UsersService {
     });
   }
 
-  async updateByEmail(email: string, data: UpdateUserDTO): Promise<User> {
-    const updateData = { ...data };
+  // async updateByEmail(email: string, data: UpdateUserDTO): Promise<User> {
+  //   const updateData = { ...data };
 
-    if (data.password) {
-      updateData.password = await bcrypt.hash(data.password, 12);
-    }
+  //   if (data.password) {
+  //     updateData.password = await bcrypt.hash(data.password, 12);
+  //   }
 
-    return this.prisma.user.update({
-      where: { email },
-      data: updateData,
-      include: {
-        role: true,
-      },
-    });
-  }
+  //   return this.prisma.user.update({
+  //     where: { email },
+  //     data: updateData,
+  //     include: {
+  //       role: true,
+  //     },
+  //   });
+  // }
 
   async updateUserRole(id: number, data: { roleId: number }) {
     return this.prisma.user.update({

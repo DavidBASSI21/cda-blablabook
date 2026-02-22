@@ -7,9 +7,12 @@ import {
   Query,
   Param,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import type { OpenLibraryDoc } from './types/books.type';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { OptionalAuthGuard } from 'src/auth/guards/optional-auth.guard';
 
 @Controller('books')
 export class BooksController {
@@ -21,11 +24,11 @@ export class BooksController {
   //   return { message: 'ça marche' };
   // }
 
-  @Post('import')
-  async create() {
-    await this.booksService.getBooksFromOpenLibraryApi();
-    return { message: 'ça marche avec Open Library' };
-  }
+  // @Post('import')
+  // async create() {
+  //   await this.booksService.getBooksFromOpenLibraryApi();
+  //   return { message: 'ça marche avec Open Library' };
+  // }
 
   @Get('fetch-random')
   async findRandomBooks(@Query('userId') userId?: string) {
@@ -46,6 +49,7 @@ export class BooksController {
   }
 
   @Get()
+  @ApiQuery({ name: 'userId', required: false, type: Number })
   findAll(@Query('userId') userId?: string) {
     return this.booksService.getBooks(userId ? +userId : undefined);
   }
@@ -63,6 +67,8 @@ export class BooksController {
   }
 
   @Get('most-commented-books')
+  @ApiBearerAuth()
+  @UseGuards(OptionalAuthGuard)
   mostCommentedBooks(
     @Query('take') take?: string,
     @Query('userId') userId?: number,

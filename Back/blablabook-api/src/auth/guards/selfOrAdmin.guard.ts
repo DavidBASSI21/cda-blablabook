@@ -9,6 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'generated/prisma';
 import { UsersService } from 'src/users/users.service';
+import { RoleId } from 'src/types/role.enum';
 
 @Injectable()
 export class SelfOrAdminGuard implements CanActivate {
@@ -55,7 +56,7 @@ export class SelfOrAdminGuard implements CanActivate {
       const targetUserId = parseInt(request.params.id);
 
       const isSelf = user.id === targetUserId;
-      const isAdmin = user.roleId === 1;
+      const isAdmin = (user.roleId as RoleId) === RoleId.ADMIN;
 
       if (!isSelf && !isAdmin) {
         throw new ForbiddenException(
