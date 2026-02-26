@@ -1,24 +1,25 @@
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNumber,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class NewUserDTO {
-  @ApiProperty()
+  @IsString()
   public username: string;
-  @ApiProperty()
+
+  @IsEmail()
   public email: string;
-  @ApiProperty()
+
+  @IsString()
+  @MinLength(8)
   public password: string;
-  @ApiProperty({
-    description: 'Indicates if the user profile is private',
-  })
+
+  @IsBoolean()
   public isPrivate: boolean;
-  @ApiProperty({
-    description: 'The role ID of the user',
-    required: false,
-  })
+
+  @IsNumber()
   public roleId: number;
-  @ApiProperty({
-    description: 'The avatar image of the user',
-    required: false,
-  })
-  public avatar?: string;
 }

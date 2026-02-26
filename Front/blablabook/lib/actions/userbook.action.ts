@@ -3,6 +3,7 @@
 const url = process.env.NEXT_PUBLIC_API_URL ?? "http://api:3000";
 
 //! RECUPERER LA LIBRAIRIE D'UN UTILISATEUR
+//unused commented out in the backend for now
 export const getUserLibrary = async (userId: number, token: string) => {
   const res = await fetch(`${url}/userbook/${userId}`, {
     method: "GET",
@@ -82,7 +83,7 @@ export const updateUserBookStatus = async (
   status: string,
   token: string,
 ) => {
-  const res = await fetch(`${url}/userbook/statut/${id}`, {
+  const res = await fetch(`${url}/userbook/status/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -109,11 +110,12 @@ export const updateUserBookStatus = async (
 };
 
 //! VÉRIFIER SI UN LIVRE EST DANS LA BIBLIOTHÈQUE DE L'UTILISATEUR
-export const checkIfBookInLibrary = async (userId: number, bookId: number) => {
+export const checkIfBookInLibrary = async (userId: number, bookId: number, token: string) => {
   const res = await fetch(`${url}/userbook/check/${userId}/${bookId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 

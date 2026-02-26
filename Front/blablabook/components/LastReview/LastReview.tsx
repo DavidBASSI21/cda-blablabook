@@ -66,7 +66,6 @@ export default async function DernieresCritiques() {
                     alt={c.book.title}
                     width={200}
                     height={300}
-                    fill
                     className="object-cover rounded-lg border"
                     loading="lazy"
                   />

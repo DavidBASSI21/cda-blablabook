@@ -84,7 +84,8 @@ export const updateProfileAction = async (
     // Si un nouveau fichier est fourni, l'ajouter
     if (profilePictureFile) {
       formData.append("profilePicture", profilePictureFile);
-    } else if (data.profilePicture) {
+    } 
+    else if (data.profilePicture) {
       // Sinon, garder l'URL existante
       formData.append("profilePicture", data.profilePicture);
     }
@@ -99,6 +100,7 @@ export const updateProfileAction = async (
     });
 
     if (!res.ok) {
+      console.log("Error response from API:", res);
       const errorData = await res.json();
       return {
         success: false,

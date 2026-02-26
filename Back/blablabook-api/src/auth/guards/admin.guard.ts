@@ -9,6 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'generated/prisma';
 import { UsersService } from 'src/users/users.service';
+import { RoleId } from 'src/types/role.enum';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -42,7 +43,7 @@ export class AdminGuard implements CanActivate {
       }
       const user = await this.usersService.findById(payload.id);
 
-      if (!user || user.roleId !== 1) {
+      if (!user || (user.roleId as RoleId) !== RoleId.ADMIN) {
         throw new ForbiddenException(
           'Accès refusé : droits administrateur requis',
         );

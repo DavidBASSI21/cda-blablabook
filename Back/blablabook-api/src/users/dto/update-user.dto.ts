@@ -1,15 +1,17 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { NewUserDTO } from './new-user.dto';
-import { OmitType } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateUserDTO extends PartialType(
-  OmitType(NewUserDTO, ['roleId'] as const),
-) {
-  username?: string | undefined;
-  email?: string | undefined;
-  password?: string | undefined;
-  avatar?: string | undefined;
-  isPrivate?: boolean | undefined;
-  description?: string | undefined;
-  profilePicture?: string | undefined;
+export class UpdateUserDTO extends PartialType(NewUserDTO) {
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  profilePicture?: string;
 }
