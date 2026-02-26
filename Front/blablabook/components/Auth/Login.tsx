@@ -169,14 +169,14 @@ export default function Login() {
           </div>
 
           {/* Lien mot de passe oublié */}
-          <div className="flex justify-end">
+          {/*<div className="flex justify-end">
             <a
               href="/mot-de-passe-oublie"
               className="text-sm text-quater hover:text-primary underline"
             >
               Mot de passe oublié ?
             </a>
-          </div>
+          </div>*/}
 
           {/* Bouton de soumission */}
           <button

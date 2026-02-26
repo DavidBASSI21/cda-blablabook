@@ -21,7 +21,7 @@ export default async function LoginPage() {
         />
       </div>
       <div className="h-px w-40 bg-quater my-2" />
-      <div className="w-full">
+      <div className="w-full px-3">
         <Login />
       </div>
     </section>
