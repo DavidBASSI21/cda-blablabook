@@ -23,8 +23,11 @@ COPY --from=builder /usr/src/api/dist ./dist
 COPY --from=builder /usr/src/api/generated ./generated
 COPY --from=builder /usr/src/api/prisma ./prisma
 
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x entrypoint.sh
+
 RUN mkdir -p uploads/profiles
 
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+ENTRYPOINT ["./entrypoint.sh"]

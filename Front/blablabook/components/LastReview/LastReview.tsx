@@ -18,8 +18,10 @@ type Item = {
   };
 };
 
+const url = process.env.NEXT_PUBLIC_API_URL ?? "http://api:3000";
+
 async function getLatest() {
-  const res = await fetch("http://api:3000/comments/latest-per-book?take=9", {
+  const res = await fetch(`${url}/comments/latest-per-book?take=9`, {
     cache: "no-store",
   });
 

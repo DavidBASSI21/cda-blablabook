@@ -26,4 +26,4 @@ VPS_USER = student
 
 // chargement du dump
 docker compose -f docker-compose.prod.yml up -d --build
-docker exec -i <vps_postgres_container> psql -U <DB_USER> <DB_NAME> < dumpSql/dev-dump.sql
+docker compose exec database pg_dump -U blablabook_user -d blablabook_db --no-owner --no-acl > dumpSql/complete.sql
