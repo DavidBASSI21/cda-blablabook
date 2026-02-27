@@ -10,7 +10,6 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --tsc --watch",
     "dev": "nest start --watch",
-    "postinstall": "prisma generate",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "start": "node dist/main.js",

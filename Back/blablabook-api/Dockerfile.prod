@@ -4,7 +4,7 @@ FROM node:24-alpine3.21 AS builder
 WORKDIR /usr/src/api
 
 COPY package*.json ./
-RUN npm install --ignore-scripts
+RUN npm install 
 
 COPY . .
 
@@ -17,11 +17,12 @@ FROM node:24-alpine3.21 AS production
 WORKDIR /usr/src/api
 
 COPY package*.json ./
-RUN npm install --omit=dev --ignore-scripts
+RUN npm install --omit=dev
 
 COPY --from=builder /usr/src/api/dist ./dist
 COPY --from=builder /usr/src/api/generated ./generated
 COPY --from=builder /usr/src/api/prisma ./prisma
+COPY --from=builder /usr/src/api/prisma.config.ts ./prisma.config.ts
 
 COPY entrypoint.sh ./entrypoint.sh
 RUN chmod +x entrypoint.sh
