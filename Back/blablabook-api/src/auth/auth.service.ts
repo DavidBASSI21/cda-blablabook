@@ -12,6 +12,7 @@ import { User } from 'generated/prisma';
 import { RegisterDTO } from './dto/register.dto';
 import { LoginDTO } from './dto/login.dto';
 import { UserWithRole } from 'src/users/types/user.types';
+import { RoleId } from 'src/types/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +52,7 @@ export class AuthService {
       email: registerDto.email,
       password: hashedPassword,
       username: registerDto.username || registerDto.email.split('@')[0],
-      roleId: 2,
+      roleId: RoleId.USER,
       isPrivate: false,
     };
 

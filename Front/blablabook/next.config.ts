@@ -27,6 +27,18 @@ const nextConfig = {
         pathname: "/uploads/**",
       },
       {
+        protocol: "http",
+        hostname: "patignierthomas-server.eddi.cloud",
+        port: "3000",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "patignierthomas-server.eddi.cloud",
+        port: "3000",
+        pathname: "/uploads/**",
+      },
+      {
         protocol: "https",
         hostname: "covers.openlibrary.org",
         port: "",

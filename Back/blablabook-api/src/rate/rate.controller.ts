@@ -14,6 +14,7 @@ import { CreateRateDto } from './dto/create-rate.dto';
 import { UpdateRateDto } from './dto/update-rate.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { User } from '../../generated/prisma';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('rate')
 export class RateController {
@@ -34,6 +35,7 @@ export class RateController {
    * Récupérer la note d'un utilisateur pour un livre
    */
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Get('book/:bookId/user')
   async getUserRateForBook(
     @Param('bookId', ParseIntPipe) bookId: number,
@@ -49,6 +51,7 @@ export class RateController {
    * Créer une note pour un livre
    */
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Post()
   async createRate(
     @Body() createRateDto: CreateRateDto,
@@ -63,6 +66,7 @@ export class RateController {
    * Modifier la note d'un utilisateur pour un livre
    */
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Put('book/:bookId')
   async updateRate(
     @Param('bookId', ParseIntPipe) bookId: number,

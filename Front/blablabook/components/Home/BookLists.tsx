@@ -31,8 +31,6 @@ export default async function BookLists() {
   const popularBooks: Book[] = resPopular.success ? resPopular.data : [];
   const latestBooks: Book[] = resLatest.success ? resLatest.data : [];
 
-  console.log("randomBooks : ", resRandom.data);
-
   return (
     <>
       <section className="border-b border-b-gray-200 mt-2 mb-6">

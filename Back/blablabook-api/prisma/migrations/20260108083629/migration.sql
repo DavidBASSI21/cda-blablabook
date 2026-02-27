@@ -1,5 +1,2 @@
--- CreateIndex
-CREATE INDEX "comment_userId_idx" ON "comment"("userId");
-
--- CreateIndex
-CREATE INDEX "comment_bookId_idx" ON "comment"("bookId");
+-- This migration is a duplicate of 20260107162653_npx_prisma_db_seed (same indexes).
+-- Emptied to avoid "already exists" error on the shadow database.

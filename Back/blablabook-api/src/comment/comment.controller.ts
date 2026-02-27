@@ -14,8 +14,9 @@ import {
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
-import { User } from '../../generated/prisma';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import express from 'express';
 
 @Controller('comments')
 export class CommentController {
@@ -30,12 +31,14 @@ export class CommentController {
   }
 
   @Get('comment-count')
+  @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async getCommentCount() {
     return this.service.getCommentCount();
   }
 
   @Get('comments-to-moderate')
+  @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async getCommentsToModerate(
     @Query('page') page: string = '0',
@@ -45,18 +48,21 @@ export class CommentController {
   }
 
   @Patch(':id/approve')
+  @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async approveComment(@Param('id', ParseIntPipe) id: number) {
     return this.service.approveComment(id);
   }
 
   @Patch(':id/reject')
+  @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async rejectComment(@Param('id', ParseIntPipe) id: number) {
     return this.service.rejectComment(id);
   }
 
   @Get('reported-comment-count')
+  @ApiBearerAuth()
   @UseGuards(AdminGuard)
   async getReportedCommentCount() {
     return this.service.getReportedCommentCount();
@@ -71,18 +77,20 @@ export class CommentController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Post(':id/report')
-  report(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
-    return this.service.reportComment(id, req.user.id);
+  report(@Param('id', ParseIntPipe) id: number, @Req() req: express.Request) {
+    return this.service.reportComment(id, req.user!.id);
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(
     @Body() createCommentDto: CreateCommentDto,
-    @Request() req: Request & { user: User },
+    @Request() req: express.Request,
   ) {
-    const userId = req.user.id;
+    const userId = req.user!.id;
     return this.service.createComment(userId, createCommentDto);
   }
 }

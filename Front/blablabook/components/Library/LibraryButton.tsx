@@ -36,10 +36,13 @@ export default function LibraryButton({
     if (!userId || initialUserBookId !== null) {
       return;
     }
-
+    
     const checkBook = async () => {
+      if (!token) {
+        return;
+      }
       setIsLoading(true);
-      const result = await checkIfBookInLibrary(userId, bookId);
+      const result = await checkIfBookInLibrary(userId, bookId, token);
       if (result.success && result.userBook) {
         setUserBookId(result.userBook.id);
       }
@@ -47,7 +50,7 @@ export default function LibraryButton({
     };
 
     checkBook();
-  }, [userId, bookId, initialUserBookId]);
+  }, [userId, bookId, initialUserBookId, token]);
 
   //! Ajouter
   const handleAdd = async () => {
@@ -82,7 +85,7 @@ export default function LibraryButton({
 
   //! Bouton CSS
   const baseBtn =
-    "flex items-center gap-1.5 whitespace-nowrap cursor-pointer text-[12px] font-normal rounded-2xl px-3 py-1 transition-colors truncate";
+    "flex items-center gap-1.5 cursor-pointer text-[12px] font-normal rounded-2xl px-3 py-1 transition-colors";
 
   if (isLoading) {
     return (
@@ -105,7 +108,7 @@ export default function LibraryButton({
           className={`${baseBtn} bg-orange-200 text-orange-800 hover:bg-orange-100 ${className}`}
         >
           <span className="material-icons text-[14px]!">bookmark_remove</span>
-          <span className="hidden sm:inline">Retirer</span>
+          <span className="inline">Retirer</span>
         </button>
       ) : (
         <button

@@ -28,20 +28,13 @@ export class UserBookService {
     return { count };
   }
 
-  findAll() {
-    return this.prisma.userBook.findMany();
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} userBook`;
-  }
-
   async updateStatus(
     id: number,
     status: UserBookStatusEnum,
+    userId: number,
   ): Promise<UserBook> {
     return this.prisma.userBook.update({
-      where: { id },
+      where: { id, userId },
       data: { status },
     });
   }

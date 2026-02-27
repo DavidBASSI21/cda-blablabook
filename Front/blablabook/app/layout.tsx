@@ -54,7 +54,7 @@ export default async function RootLayout({
               <NavbarMobile isConnected={isAuth} />
             </div>
           </nav>
-          <main className="w-full min-h-screen bg-white">{children}</main>
+          <main className="w-full min-h-screen bg-white pb-20">{children}</main>
           <div className="w-full hidden sm:block">
             <Footer />
           </div>

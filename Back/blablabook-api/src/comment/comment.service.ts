@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CommentStatusEnum } from 'generated/prisma';
 
 @Injectable()
 export class CommentService {
@@ -17,7 +18,7 @@ export class CommentService {
       skip,
       take,
       where: {
-        status: 'ACTIVE',
+        status: CommentStatusEnum.ACTIVE,
         reports: {
           some: {},
         },
@@ -63,7 +64,11 @@ export class CommentService {
       this.prisma.comment.findMany({
         skip,
         take,
-        where: { status: { in: ['ACTIVE', 'APPROVED'] } },
+        where: {
+          status: {
+            in: [CommentStatusEnum.ACTIVE, CommentStatusEnum.APPROVED],
+          },
+        },
       }),
     ]);
     return { data };
@@ -81,7 +86,7 @@ export class CommentService {
       data: {
         title: dto.title,
         content: dto.content,
-        status: 'ACTIVE',
+        status: CommentStatusEnum.ACTIVE,
         date: new Date(),
 
         user: { connect: { id: userId } },
@@ -125,7 +130,7 @@ export class CommentService {
     if (!exists) throw new NotFoundException('Commentaire introuvable');
     return this.prisma.comment.update({
       where: { id: commentId },
-      data: { status: 'APPROVED' },
+      data: { status: CommentStatusEnum.APPROVED },
     });
   }
 
@@ -137,13 +142,15 @@ export class CommentService {
     if (!exists) throw new NotFoundException('Commentaire introuvable');
     return this.prisma.comment.update({
       where: { id: commentId },
-      data: { status: 'HIDDEN' },
+      data: { status: CommentStatusEnum.HIDDEN },
     });
   }
 
   async latestCommentPerBook(take = 10) {
     return this.prisma.comment.findMany({
-      where: { status: { in: ['ACTIVE', 'APPROVED'] } },
+      where: {
+        status: { in: [CommentStatusEnum.ACTIVE, CommentStatusEnum.APPROVED] },
+      },
       orderBy: {
         date: 'desc',
       },
@@ -165,7 +172,9 @@ export class CommentService {
   async numbeOfCommentsPerBook(take = 10) {
     const groupedComments = await this.prisma.comment.groupBy({
       by: ['bookId'],
-      where: { status: { in: ['ACTIVE', 'APPROVED'] } },
+      where: {
+        status: { in: [CommentStatusEnum.ACTIVE, CommentStatusEnum.APPROVED] },
+      },
       _count: {
         bookId: true,
       },

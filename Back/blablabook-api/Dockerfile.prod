@@ -1,0 +1,30 @@
+# ---- Build stage ----
+FROM node:24-alpine3.21 AS builder
+
+WORKDIR /usr/src/api
+
+COPY package*.json ./
+RUN npm install --ignore-scripts
+
+COPY . .
+
+RUN npx prisma generate
+RUN npm run build
+
+# ---- Production stage ----
+FROM node:24-alpine3.21 AS production
+
+WORKDIR /usr/src/api
+
+COPY package*.json ./
+RUN npm install --omit=dev --ignore-scripts
+
+COPY --from=builder /usr/src/api/dist ./dist
+COPY --from=builder /usr/src/api/generated ./generated
+COPY --from=builder /usr/src/api/prisma ./prisma
+
+RUN mkdir -p uploads/profiles
+
+EXPOSE 3000
+
+CMD ["node", "dist/main"]
