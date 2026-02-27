@@ -15,3 +15,11 @@ run npx prisma migrate dev
 - Relancer le docker afin qu'il prenne en compte la nouvelle URL
 - Si c'est la 1ère fois :
   --> dans le container back end : npx prisma generate + npx prisma db push + npx prisma db seed
+
+
+
+## CI/CD
+
+VPS_HOST = patignierthomas-server.eddi.cloud
+VPS_PORT = 22
+VPS_USER = student

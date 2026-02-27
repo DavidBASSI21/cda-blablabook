@@ -490,46 +490,20 @@ async function main() {
 
     console.log('Roles créés');
 
-    // Admin
+    // User 1
     const admin = await prisma.user.upsert({
-      where: { email: 'admin@example.com' },
+      where: { email: 'truc1@mail.com' },
       update: {},
       create: {
-        email: 'admin@example.com',
-        username: 'admin',
-        password: 'password123',
+        email: 'truc1@mail.com',
+        username: 'Thomas',
+        password: 'SuperMotDePasse1!',
         isPrivate: false,
         roleId: adminRole.id,
       },
     });
 
-    // User 1
-    const john = await prisma.user.upsert({
-      where: { email: 'john@example.com' },
-      update: {},
-      create: {
-        email: 'john@example.com',
-        username: 'john',
-        password: 'password123',
-        isPrivate: false,
-        roleId: userRole.id,
-      },
-    });
-
-    // User 2
-    const jane = await prisma.user.upsert({
-      where: { email: 'jane@example.com' },
-      update: {},
-      create: {
-        email: 'jane@example.com',
-        username: 'jane',
-        password: 'password123',
-        isPrivate: true,
-        roleId: userRole.id,
-      },
-    });
-
-    console.log('Users créés:', { admin, john, jane });
+    console.log('Users créés:', { admin });
 
     // Books
     for (const bookData of booksData) {
