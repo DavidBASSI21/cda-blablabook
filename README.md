@@ -23,3 +23,6 @@ run npx prisma migrate dev
 VPS_HOST = patignierthomas-server.eddi.cloud
 VPS_PORT = 22
 VPS_USER = student
+
+// chargement du dump
+docker exec -i <vps_postgres_container> psql -U <DB_USER> <DB_NAME> < dumpSql/dev-dump.sql
