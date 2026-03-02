@@ -102,7 +102,7 @@ jobs:
 
             echo "🐳 Building and restarting containers..."
             docker compose pull
-            docker compose up -d --build
+            docker compose up -d
 
             echo "🧹 Cleaning up unused Docker resources..."
             docker image prune -f
