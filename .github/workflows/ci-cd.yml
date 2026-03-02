@@ -109,4 +109,3 @@ jobs:
 
             echo "✅ Deployment complete!"
           timeout: 300
-          connect_timeout: 30
