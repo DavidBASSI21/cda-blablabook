@@ -94,6 +94,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           port: ${{ secrets.VPS_PORT }}
+          debug: true
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
 
@@ -102,7 +103,7 @@ jobs:
 
             echo "🐳 Building and restarting containers..."
             docker compose pull
-            docker compose up -d
+            docker compose up -d --build
 
             echo "🧹 Cleaning up unused Docker resources..."
             docker image prune -f
