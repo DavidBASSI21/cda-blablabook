@@ -76,6 +76,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
+
   # ─────────────────────────────────────────────
   # JOB 3 - Deploy to VPS (only on push to main)
   # ─────────────────────────────────────────────
@@ -85,6 +86,11 @@ jobs:
     needs: [test-frontend, test-backend]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
+      - name: Test network reachability
+        run: |
+          echo "🔍 Testing connectivity to VPS..."
+          ping -c 3 ${{ secrets.VPS_HOST }} || echo "⚠ Ping failed"
+          nc -vz -w 5 ${{ secrets.VPS_HOST }} ${{ secrets.VPS_PORT }} || echo "⚠ Port not reachable"
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
