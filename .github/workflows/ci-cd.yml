@@ -108,4 +108,4 @@ jobs:
             docker image prune -f
 
             echo "✅ Deployment complete!"
-          timeout: 300
+          timeout: 300s
