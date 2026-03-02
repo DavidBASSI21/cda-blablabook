@@ -21,17 +21,13 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  // const corsOptions = {
-  //   origin: process.env.FRONT_URL ? [process.env.FRONT_URL] : [],
-  //   credentials: true, // Permet d'envoyer des cookies
-  //   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  //   allowedHeaders: ['Content-Type', 'Authorization'],
-  // };
+  const corsOptions = {
+    origin: process.env.FRONT_URL ? [process.env.FRONT_URL] : [],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
 
-  app.enableCors({
-    origin: ['https://blablabook-ten.vercel.app/'],
-    credentials: true,
-  });
+  app.enableCors(corsOptions);
 
   const config = new DocumentBuilder()
     .setTitle('BlablaBook API')

@@ -113,9 +113,9 @@ export class CommentService {
       ]);
 
       return { ok: true };
-    } catch (e: any) {
+    } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (e?.code === 'P2002') {
+      if ((e as any)?.code === 'P2002') {
         throw new ConflictException('Déjà signalé');
       }
       throw e;

@@ -25,5 +25,6 @@ VPS_PORT = 22
 VPS_USER = student
 
 // chargement du dump
+docker compose -f docker-compose.prod.yml up 
 docker compose -f docker-compose.prod.yml up -d --build
-docker compose exec database pg_dump -U blablabook_user -d blablabook_db --no-owner --no-acl > dumpSql/complete.sql
+docker exec -i $(docker compose -f docker-compose.prod.yml ps -q database) psql -U blablabook_user -d blablabook_db < dumpSql/complete.sql

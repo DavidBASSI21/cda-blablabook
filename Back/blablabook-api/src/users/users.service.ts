@@ -66,12 +66,6 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
         roleId: true,
-        userBooks: {
-          include: {
-            book: true,
-          },
-        },
-        comments: true,
       },
     });
 

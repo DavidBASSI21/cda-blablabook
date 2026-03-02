@@ -40,7 +40,7 @@ export default function LibraryControls({
         <StatusSelector
           token={token}
           userBookId={currentUserBookId}
-          status={(currentStatus as any) || "NOT_READ"}
+          status={currentStatus || "NOT_READ"}
           onUpdated={setCurrentStatus}
           onToast={(msg: string, type: ToastType) => showToast(msg, type)}
           triggerClassName="w-[49%] px-3 py-1"

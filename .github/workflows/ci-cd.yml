@@ -18,7 +18,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: cda-blablabook/Front/blablabook
+        working-directory: Front/blablabook
 
     steps:
       - name: Checkout code
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: cda-blablabook/Front/blablabook/package-lock.json
+          cache-dependency-path: Front/blablabook/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -37,8 +37,8 @@ jobs:
       - name: Run tests
         run: npm test -- --watchAll=false --passWithNoTests
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:3000
-          NEXTAUTH_SECRET: test-secret-for-ci
+          NEXT_PUBLIC_API_URL: http://api:3000
+          NEXTAUTH_SECRET: u4D6rA22xNEwO8s09Pfb686z4fw/sjNzeZxG2pBebto=
 
   # ─────────────────────────────────────────────
   # JOB 2 - Run Backend Tests
@@ -49,7 +49,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: cda-blablabook/Back/blablabook-api
+        working-directory: Back/blablabook-api
 
     steps:
       - name: Checkout code
@@ -60,7 +60,7 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: cda-blablabook/Back/blablabook-api/package-lock.json
+          cache-dependency-path: Back/blablabook-api/package-lock.json
 
       - name: Install dependencies
         run: npm ci

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -91,8 +90,8 @@ export default function CommentsSection({
 
       closeModal();
       router.refresh();
-    } catch (e: any) {
-      setErrorMsg(e?.message ?? "Erreur lors de l’envoi du commentaire.");
+    } catch (e: unknown) {
+      setErrorMsg((e as Error)?.message ?? "Erreur lors de l’envoi du commentaire.");
     } finally {
       setSubmitting(false);
     }

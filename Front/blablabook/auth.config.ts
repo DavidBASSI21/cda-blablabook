@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
@@ -64,13 +63,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.user = {
           id: user.id,
           email: user.email,
-          username: (user as any).username,
-          isPrivate: (user as any).isPrivate,
-          profilePicture: (user as any).profilePicture ?? null,
-          roleId: (user as any).roleId,
+          username: user.username,
+          isPrivate: user.isPrivate,
+          profilePicture: user.profilePicture ?? null,
+          roleId: user.roleId,
         };
-        token.accessToken = (user as any).accessToken ?? null;
-        token.refreshToken = (user as any).refreshToken ?? null;
+        token.accessToken = user.accessToken ?? null;
+        token.refreshToken = user.refreshToken ?? null;
       }
       return token;
     },
@@ -78,8 +77,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token.user) {
         session.user = token.user as typeof session.user;
       }
-      (session as any).accessToken = (token as any).accessToken ?? null;
-      (session as any).refreshToken = (token as any).refreshToken ?? null;
+      session.accessToken = token.accessToken ?? null;
+      session.refreshToken = token.refreshToken ?? null;
       return session;
     },
   },

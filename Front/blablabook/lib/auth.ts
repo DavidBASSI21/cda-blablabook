@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from "@/auth.config";
 
 export type User = {
@@ -22,9 +21,9 @@ export async function getAuthUser(): Promise<User | null> {
   return {
     id: Number(session.user.id),
     email: session.user.email ?? "",
-    username: (session.user as any).username ?? "",
-    isPrivate: (session.user as any).isPrivate ?? false,
-    profilePicture: (session.user as any).profilePicture ?? null,
-    roleId: (session.user as any).roleId ?? null,
+    username: session.user.username ?? "",
+    isPrivate: session.user.isPrivate ?? false,
+    profilePicture: session.user.profilePicture ?? null,
+    roleId: session.user.roleId ?? null,
   };
 }
