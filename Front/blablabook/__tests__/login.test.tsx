@@ -12,7 +12,9 @@ jest.mock("next/navigation", () => ({
     refresh: refreshMock,
   }),
 }));
-
+jest.mock("next-auth/react", () => ({
+  useSession: () => ({ update: jest.fn(), data: null, status: "unauthenticated" }),
+}));
 describe("Login", () => {
   beforeEach(() => {
     jest.clearAllMocks();
