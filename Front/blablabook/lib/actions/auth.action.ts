@@ -11,7 +11,11 @@ export const registerAction = async (data: z.infer<typeof registerSchema>) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    }),
   });
 
   if (!res.ok) {

@@ -54,7 +54,6 @@ export default function LibraryButton({
 
   //! Ajouter
   const handleAdd = async () => {
-    console.log("Handle add to library", bookId, userId, token);
     if (!token || !userId) {
       onToast?.("Veuillez vous connecter pour ajouter des livres", "error");
       return;

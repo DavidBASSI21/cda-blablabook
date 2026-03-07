@@ -110,7 +110,6 @@ export class AuthService {
         id: user?.id,
         username: user?.username,
         isPrivate: user?.isPrivate,
-        profilePicture: user?.profilePicture,
         roleId: user?.roleId,
       },
     };

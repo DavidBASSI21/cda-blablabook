@@ -9,7 +9,6 @@ export default function BackofficeCard({
   label,
   count,
 }: BackofficeCardProps) {
-  console.log("count", count);
   return (
     <div className="bg-indigo-100 w-[48%] rounded-md px-2.5 py-3.5 lg:w-[24%]">
       <div className="flex flex-col gap-y-2.5">

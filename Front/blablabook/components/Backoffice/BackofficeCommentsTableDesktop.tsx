@@ -42,7 +42,6 @@ const columns = [
     cell: (info) => {
       const comment = info.row.original;
       const username = info.getValue();
-      console.log("info.row.original :", comment);
       return (
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">

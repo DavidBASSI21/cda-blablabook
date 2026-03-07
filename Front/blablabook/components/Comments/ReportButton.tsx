@@ -20,8 +20,7 @@ export default function ReportButton({
 
     try {
       const url = `/api/comments/${commentId}/report`;
-      console.log("CALL REPORT:", url);
-      const res = await fetch(`/api/comments/${commentId}/report`, {
+      const res = await fetch(url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

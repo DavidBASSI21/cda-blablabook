@@ -100,7 +100,6 @@ export const updateProfileAction = async (
     });
 
     if (!res.ok) {
-      console.log("Error response from API:", res);
       const errorData = await res.json();
       return {
         success: false,

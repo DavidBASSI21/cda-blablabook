@@ -33,13 +33,44 @@ export class UserBookService {
     status: UserBookStatusEnum,
     userId: number,
   ): Promise<UserBook> {
+    const userBook = await this.prisma.userBook.findUnique({
+      where: { id, userId },
+    });
+
+    if (!userBook) {
+      throw new Error(
+        "UserBook non trouvé ou n'appartient pas à l'utilisateur",
+      );
+    }
+
+    if (userBook.userId !== userId) {
+      throw new Error(
+        "Vous n'avez pas la permission de mettre à jour le statut de ce livre pour un autre utilisateur",
+      );
+    }
     return this.prisma.userBook.update({
       where: { id, userId },
       data: { status },
     });
   }
 
-  async remove(id: number) {
+  async remove(id: number, userId: number) {
+    const userBook = await this.prisma.userBook.findUnique({
+      where: { id, userId },
+    });
+
+    if (!userBook) {
+      throw new Error(
+        "UserBook non trouvé ou n'appartient pas à l'utilisateur",
+      );
+    }
+
+    if (userBook.userId !== userId) {
+      throw new Error(
+        "Vous n'avez pas la permission de supprimer ce livre pour un autre utilisateur",
+      );
+    }
+
     return this.prisma.userBook.delete({
       where: { id },
     });

@@ -17,36 +17,36 @@ export async function POST(request: NextRequest) {
     }
 
     // Appel au backend
-    const response = await fetch(`${apiBaseUrl}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    // const response = await fetch(`${apiBaseUrl}/auth/login`, {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ email, password }),
+    // });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const message =
-        errorData?.message || "Identifiants incorrects. Veuillez réessayer.";
-      return NextResponse.json({ error: message }, { status: 401 });
-    }
+    // if (!response.ok) {
+    //   const errorData = await response.json().catch(() => ({}));
+    //   const message =
+    //     errorData?.message || "Identifiants incorrects. Veuillez réessayer.";
+    //   return NextResponse.json({ error: message }, { status: 401 });
+    // }
 
-    const data = await response.json();
-    if (!data?.user) {
-      return NextResponse.json(
-        { error: "Erreur lors de la connexion" },
-        { status: 401 },
-      );
-    }
+    // const data = await response.json();
+    // if (!data?.user) {
+    //   return NextResponse.json(
+    //     { error: "Erreur lors de la connexion" },
+    //     { status: 401 },
+    //   );
+    // }
 
     // Créer la session avec NextAuth
-    await signIn("credentials", {
+   await signIn("credentials", {
       email,
       password,
       redirect: false,
     });
 
     return NextResponse.json(
-      { success: true, user: data.user },
+      { success: true },
       { status: 200 },
     );
   } catch (error) {

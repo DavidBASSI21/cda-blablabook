@@ -52,8 +52,6 @@ export class UsersController {
     const { data, total } = await this.usersService.findAll(skip, take, search);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const usersWithoutPassWword = data.map(({ password, ...user }) => user);
-    console.log('--- REQUETE RECUE ---');
-    console.log('Search query param:', search);
     return { data: usersWithoutPassWword, total };
   }
 
@@ -87,8 +85,17 @@ export class UsersController {
 
   //! GET USER BY ID
   @Get(':id')
-  async findById(@Param('id', ParseIntPipe) id: number) {
+  @UseGuards(OptionalAuthGuard)
+  async findById(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: express.Request,
+  ) {
     const user = await this.usersService.findById(id);
+    if (id !== request.user?.id && user?.isPrivate) {
+      throw new ForbiddenException(
+        'Les informations de cet utilisateur sont privées',
+      );
+    }
     if (user) {
       return user;
     }
@@ -144,8 +151,7 @@ export class UsersController {
   ) {
     const dto = plainToInstance(UpdateUserFormDataDTO, data);
     const errors = await validate(dto);
-    console.log('dto:', dto);
-    console.log('Validation errors:', errors);
+
     if (errors.length > 0) {
       throw new BadRequestException(errors);
     }

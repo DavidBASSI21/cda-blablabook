@@ -32,6 +32,7 @@ export class BooksService {
     private readonly commentService: CommentService,
   ) {}
 
+  // is only used for development, to populate the database with books from the openlibrary api
   async getBooksFromOpenLibraryApi() {
     // 1. On ne demande à l'API de recherche que les champs dont on a VRAIMENT besoin
     const { data } = await firstValueFrom(
@@ -73,7 +74,7 @@ export class BooksService {
 
         let summary: string | null = null;
 
-        // Récupérati
+        // Récupération de la description du work
         if (doc.key) {
           const workResponse = await firstValueFrom(
             this.httpService

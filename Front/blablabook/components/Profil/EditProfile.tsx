@@ -13,7 +13,7 @@ import Link from "next/link";
 import { getUploadUrl } from "@/lib/utils";
 import ProfileImageDropzone from "./ProfileImageDropzone";
 import DeleteConfirmation from "./DeleteConfirmation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { removeUser } from "@/lib/actions/backoffice.action";
 
 type EditProfileFormData = z.infer<typeof editProfileSchema>;
@@ -27,6 +27,7 @@ export default function EditProfile({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { update } = useSession();
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     initialData.profilePicture
       ? getUploadUrl(initialData.profilePicture)
@@ -129,8 +130,16 @@ export default function EditProfile({
 
       showToast("Profil mis à jour avec succès !", "success");
 
+      // Update the client-side JWT token with the new profile data
+      await update({
+        username: data.username,
+        profilePicture: response.data?.profilePicture ?? data.profilePicture ?? null,
+        isPrivate: data.isPrivate,
+      });
+
       setTimeout(() => {
         router.push("/mon-profil");
+        router.refresh();
       }, 1500);
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
