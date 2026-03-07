@@ -1,4 +1,31 @@
 services:
+  gateway:
+    image: nginxproxy/nginx-proxy
+    container_name: gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+    restart: always
+  ssl-helper:
+    image: nginxproxy/acme-companion
+    container_name: ssl-helper
+    depends_on: 
+      - gateway
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs:rw
+      - ./vhost:/etc/nginx/vhost.d:rw
+      - ./html:/usr/share/nginx/html:rw
+      - ./acme:/etc/acme.sh
+    environment:
+      - DEFAULT_EMAIL=david.bassi.db@gmail.com
+    restart: always
+    
   database:
     image: postgres:18.1-alpine
     volumes:
@@ -6,7 +33,7 @@ services:
     # No host port exposure in production - only internal network access
     restart: always
     env_file: "Back/blablabook-api/.env"
-
+  
   api:
     build:
       context: ./Back/blablabook-api
@@ -18,8 +45,11 @@ services:
       # Only persist uploads, no source code mounting
       - ./Back/blablabook-api/uploads:/usr/src/api/uploads
     restart: always
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
+    environment:
+      - VIRTUAL_HOST=api.davidbassi21-server.eddi.cloud
+      - LETSENCRYPT_HOST=api.davidbassi21-server.eddi.cloud
     env_file: "Back/blablabook-api/.env"
 
   frontend:
@@ -27,8 +57,11 @@ services:
     build:
       context: ./Front/blablabook
       dockerfile: Dockerfile.prod
-    ports:
-      - "80:3000"
+    expose:
+      - "3000"
+    environment:
+      - VIRTUAL_HOST=davidbassi21-server.eddi.cloud
+      - LETSENCRYPT_HOST=davidbassi21-server.eddi.cloud
     depends_on:
       - api
     env_file: "Front/blablabook/.env"
@@ -37,11 +70,13 @@ services:
   adminer:
     image: adminer:latest
     restart: always
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
-      ADMINER_DEFAULT_SERVER: database
-      ADMINER_DESIGN: pepa-linha
+      - ADMINER_DEFAULT_SERVER=database
+      - ADMINER_DESIGN=pepa-linha
+      - VIRTUAL_HOST=adminer.davidbassi21-server.eddi.cloud
+      - LETSENCRYPT_HOST=adminer.davidbassi21-server.eddi.cloud
     depends_on:
       - database
 
