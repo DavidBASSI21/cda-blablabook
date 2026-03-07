@@ -6,6 +6,7 @@ import { z } from "zod";
 import { loginSchema } from "@/lib/validator.schema";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Toast, useToast } from "@/components/Toast";
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -14,6 +15,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { update } = useSession();
   const { toast, showToast, hideToast } = useToast();
 
   const {
@@ -47,6 +49,7 @@ export default function Login() {
 
       showToast("Connexion réussie !", "success");
       reset();
+      await update();
       setTimeout(() => {
         router.replace("/mon-profil");
         router.refresh();

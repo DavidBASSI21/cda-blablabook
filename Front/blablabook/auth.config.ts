@@ -42,23 +42,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const data = await response.json();
-        if (!data?.user) return null;
+
+        const userDataRequest = await fetch(`${apiBaseUrl}/users/${data.user.id}`, {
+          headers: {
+            Authorization: `Bearer ${data.token ?? data.accessToken}`,
+          },
+        });
+
+        const userData = await userDataRequest.json();
+
+        if (!data?.user || !userData) return null;
+
 
         return {
           id: String(data.user.id),
-          email: data.user.email,
           username: data.user.username,
           isPrivate: data.user.isPrivate,
-          profilePicture: data.user.profilePicture ?? null,
-          accessToken: data.token ?? data.refresh_token,
-          refreshToken: data.refresh_token ?? null,
+          profilePicture: userData.profilePicture ?? null,
+          accessToken: data.token,
           roleId: data.user.roleId,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session: sessionData }) {
       if (user) {
         token.user = {
           id: user.id,
@@ -70,6 +78,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         };
         token.accessToken = user.accessToken ?? null;
         token.refreshToken = user.refreshToken ?? null;
+      }
+      // Merge partial updates triggered by useSession().update(data)
+      if (trigger === "update" && sessionData) {
+        token.user = {
+          ...(token.user as object),
+          ...sessionData,
+        };
       }
       return token;
     },

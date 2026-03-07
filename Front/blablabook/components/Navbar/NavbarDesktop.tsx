@@ -73,8 +73,6 @@ export default function NavbarDesktop({
           );
         })}
 
-       
-
         <Link
           href={connected ? "/mon-profil" : "/se-connecter"}
           className="flex items-center gap-2 text-quater hover:text-primary cursor-pointer transition-colors duration-300"

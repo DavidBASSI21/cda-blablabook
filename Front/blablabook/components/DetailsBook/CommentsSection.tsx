@@ -109,7 +109,6 @@ export default function CommentsSection({
   }, [isModalOpen]);
 
   const canComment = Boolean(token && userId);
-  console.log("comments ids:", comments.map(c => c.id));
   return (
     <div className="border-t border-gray-200 pt-6">
       <button

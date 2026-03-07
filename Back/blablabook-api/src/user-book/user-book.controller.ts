@@ -58,11 +58,6 @@ export class UserBookController {
     @Body() body: { status: UserBookStatusEnum },
     @Req() request: express.Request,
   ) {
-    if (request.user!.id !== id) {
-      throw new UnauthorizedException(
-        "Vous n'avez pas la permission de mettre à jour le statut de ce livre pour un autre utilisateur",
-      );
-    }
     return this.userBookService.updateStatus(id, body.status, request.user!.id);
   }
 
@@ -85,13 +80,11 @@ export class UserBookController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(204)
-  remove(@Param('id') id: string, @Req() request: express.Request) {
-    if (request.user!.id !== +id) {
-      throw new UnauthorizedException(
-        "Vous n'avez pas la permission de supprimer ce livre de la bibliothèque d'un autre utilisateur",
-      );
-    }
-    return this.userBookService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: express.Request,
+  ) {
+    return this.userBookService.remove(id, request.user!.id);
   }
 
   /**

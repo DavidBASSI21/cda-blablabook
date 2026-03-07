@@ -251,7 +251,6 @@ export const getAllCommentsToModerate = async (page: number, limit: number) => {
       };
 
     const data = await res.json();
-    console.log("Data from API:", data);
     return {
       success: true,
       data,
