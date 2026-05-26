@@ -33,7 +33,7 @@ export default function LibraryControls({
         initialUserBookId={currentUserBookId}
         onUpdate={setCurrentUserBookId}
         onToast={(msg: string, type: ToastType) => showToast(msg, type)}
-        className={currentUserBookId ? "w-[49%]" : "w-full"}
+        className={"w-[50%] justify-center"}
       />
 
       {currentUserBookId && (
@@ -43,7 +43,7 @@ export default function LibraryControls({
           status={currentStatus || "NOT_READ"}
           onUpdated={setCurrentStatus}
           onToast={(msg: string, type: ToastType) => showToast(msg, type)}
-          triggerClassName="w-[49%] px-3 py-1"
+          triggerClassName="w-[50%] px-3 py-1 justify-center"
         />
       )}
     </div>

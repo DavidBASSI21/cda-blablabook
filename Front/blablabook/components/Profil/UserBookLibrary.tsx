@@ -57,10 +57,10 @@ export default function UserBookLibrary({
       <div className="pt-6 pb-20 mx-auto">
         <div className="w-full
     grid
-    gap-4
-    sm:gap-6
-    md:gap-8
-    grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+    grid-cols-2
+    md:grid-cols-[repeat(auto-fill,minmax(240px,240px))]
+    gap-5
+    md:justify-between">
           {userBooks.map((userBook) => (
             <CardBookProfil
               key={userBook.id}
