@@ -32,9 +32,7 @@ export default function NavbarMobile({
     { href: "/", label: "Accueil", icon: "home" },
     { href: "/rechercher", label: "Recherche", icon: "search" },
     {
-      href: "/dernieres-critiques",
-      label: "Dernières critiques",
-      icon: "book",
+      href: "/dernieres-critiques", label: "Dernières critiques", icon: "book",
     },
         ...(session?.user?.roleId === 1 ? [
       {href:"/administration", label:"Administration", icon:"dashboard"}

@@ -48,7 +48,7 @@ export class CommentService {
     return { count: result };
   }
 
- async getReportedCommentCount() {
+  async getReportedCommentCount() {
     const result = await this.prisma.$queryRaw<{ id: number }[]>`
       SELECT c.id
       FROM comment c
