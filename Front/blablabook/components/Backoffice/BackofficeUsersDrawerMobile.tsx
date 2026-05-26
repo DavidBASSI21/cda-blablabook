@@ -84,7 +84,7 @@ export default function BackofficeUsersMobile({
       { threshold: 0.5 },
     );
 
-    if (observerRef.current) observer.observe(observerRef.current);
+  if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
   }, [hasMore, loading, page, debouncedSearch, users.length]);
   return (

@@ -49,7 +49,7 @@ export default function BackofficeCommentsDrawerMobile({
           setComments((prev) => [...prev, ...res.data]);
           setPage(nextPage);
           // On vérifie si on a atteint le bout de la base de données
-          setHasMore(comments.length + res.data.length < res.data);
+          setHasMore(comments.length + res.data.length < totalCommentsToModerateCount);
           setLoading(false);
         }
       },
@@ -57,7 +57,7 @@ export default function BackofficeCommentsDrawerMobile({
     );
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
-  }, [hasMore, loading, page, comments.length]);
+  }, [hasMore, loading, page, comments.length, totalCommentsToModerateCount]);
   return (
     <div className="w-full flex flex-col gap-2">
       {totalCommentsToModerateCount === 0 && (
